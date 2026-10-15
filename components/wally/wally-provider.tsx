@@ -9,7 +9,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { z } from "zod";
 import { categories, categorySchema, localDate, paymentSchema, type CategoryId, type PaymentMethod, type TransactionType } from "@/lib/finance";
 import { defaultFilters, type HistoryFilters } from "@/lib/insights";
-import { walletRepository, type WalletCommand, type WalletRepository } from "@/lib/wallet-store";
+import type { WalletCommand, WalletRepository } from "@/lib/wallet-store";
 
 export type View = "register" | "history" | "insights";
 type Choice = { category: CategoryId; paymentMethod: PaymentMethod };
@@ -74,16 +74,20 @@ const subscribeHydration = () => () => {};
 const clientSnapshot = () => true;
 const serverSnapshot = () => false;
 
-type Workspace = { repository: WalletRepository; scope: string; cloud: boolean; displayName?: string; signOut?: () => Promise<void> };
-const WorkspaceContext = createContext<Workspace>({ repository: walletRepository, scope: "local", cloud: false });
-export const useWorkspace = () => useContext(WorkspaceContext);
+type Workspace = { repository: WalletRepository; scope: string; displayName: string; signOut: () => Promise<void> };
+const WorkspaceContext = createContext<Workspace | null>(null);
+export function useWorkspace() {
+  const workspace = useContext(WorkspaceContext);
+  if (!workspace) throw new Error("WallyProvider is required.");
+  return workspace;
+}
 
-export function WallyProvider({ children, repository = walletRepository, scope = "local", cloud = false, displayName, signOut }: Partial<Workspace> & { children: ReactNode }) {
+export function WallyProvider({ children, repository, scope, displayName, signOut }: Workspace & { children: ReactNode }) {
   const cleanupTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [uiStore] = useState(() => createUiStore(scope));
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
-      queries: { retry: false, networkMode: "always", staleTime: cloud ? 15000 : Infinity },
+      queries: { retry: false, networkMode: "always", staleTime: 15000 },
       mutations: { retry: false, networkMode: "always" },
     },
   }));
@@ -94,7 +98,7 @@ export function WallyProvider({ children, repository = walletRepository, scope =
     // Clear only after a real unmount, when no replacement setup cancels this timer.
     return () => { cleanupTimer.current = setTimeout(() => queryClient.clear(), 0); };
   }, [queryClient]);
-  return <WorkspaceContext.Provider value={{ repository, scope, cloud, displayName, signOut }}><UiContext.Provider value={uiStore}>
+  return <WorkspaceContext.Provider value={{ repository, scope, displayName, signOut }}><UiContext.Provider value={uiStore}>
     <QueryClientProvider client={queryClient}>
       <MotionConfig reducedMotion="user" transition={{ duration: 0.22, ease: "easeOut" }}>
         {children}
@@ -106,11 +110,11 @@ export function WallyProvider({ children, repository = walletRepository, scope =
 }
 
 export function useWallet() {
-  const { repository, scope, cloud } = useWorkspace();
+  const { repository, scope } = useWorkspace();
   const walletKey = ["wallet", scope];
   const hydrated = useSyncExternalStore(subscribeHydration, clientSnapshot, serverSnapshot);
   const client = useQueryClient();
-  const query = useQuery({ queryKey: walletKey, queryFn: () => repository.load(), enabled: hydrated, refetchInterval: cloud ? 30000 : false });
+  const query = useQuery({ queryKey: walletKey, queryFn: () => repository.load(), enabled: hydrated, refetchInterval: 30000 });
   const mutation = useMutation({
     mutationFn: (command: WalletCommand) => repository.execute(command),
     scope: { id: scope },
@@ -118,9 +122,6 @@ export function useWallet() {
     onSuccess: result => { client.setQueryData(walletKey, result.data); },
     onError: () => { void client.invalidateQueries({ queryKey: walletKey }); },
   });
-  useEffect(() => repository.subscribe(() => {
-    void client.invalidateQueries({ queryKey: ["wallet", scope] });
-  }), [client, repository, scope]);
   return { ...query, execute: mutation.mutateAsync, saving: mutation.isPending };
 }
 

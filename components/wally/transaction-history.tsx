@@ -156,7 +156,6 @@ export function TransactionDetail({ transaction, onDelete, onSave }: {
       <div><dt>Método</dt><dd>{payment.fullLabel}</dd></div>
       <div><dt>Fecha</dt><dd>{fullDate(transaction.date)}</dd></div>
       <div><dt>Moneda</dt><dd>Soles (PEN)</dd></div>
-      {transaction.isDemo && <div><dt>Origen</dt><dd>Datos de ejemplo</dd></div>}
     </dl>
     {error && <div className="inline-error" role="alert"><Icon name="info" size={18} />{error}</div>}
     {confirming ? <div className="delete-confirm">

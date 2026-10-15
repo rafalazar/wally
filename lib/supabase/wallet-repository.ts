@@ -18,7 +18,7 @@ function transactionFromRow(value: unknown): Transaction {
   const row = rowSchema.parse(value);
   return transactionSchema.parse({ id: row.id, type: row.type, amountCents: row.amount_cents,
     description: row.description, category: row.category_id, paymentMethod: row.payment_method_id,
-    date: row.occurred_on, createdAt: row.created_at, version: row.version, isDemo: false });
+    date: row.occurred_on, createdAt: row.created_at, version: row.version });
 }
 export function databaseError(error: { code?: string; message: string }): Error {
   if (["PGRST202", "PGRST205", "42P01"].includes(error.code ?? "")) return new Error("Falta aplicar la migración de Wally en Supabase.");
@@ -39,7 +39,7 @@ export function createWalletRepository(client: SupabaseClient<Database>, walletI
       const { data, error } = await client.rpc("get_wallet", { p_wallet_id: walletId });
       if (error) throw databaseError(error);
       const snapshot = z.object({ wallet: cloudWalletSchema, categories: z.array(categoryDefinitionSchema), transactions: z.array(z.unknown()) }).parse(data);
-      const parsed = walletSchema.parse({ version: 1, currency: snapshot.wallet.currency_code, demo: false,
+      const parsed = walletSchema.parse({ version: 1, currency: snapshot.wallet.currency_code,
         categories: snapshot.categories, transactions: snapshot.transactions.map(transactionFromRow) });
       if (startedAt === revision) current = parsed;
       return current ?? parsed;
@@ -47,7 +47,6 @@ export function createWalletRepository(client: SupabaseClient<Database>, walletI
     async execute(command: WalletCommand) {
       if (!current) throw new Error("Espera a que termine de cargar la billetera.");
       revision++;
-      if (command.type === "start-personal") return { data: current };
       if (command.type === "add-category") {
         const category = categoryDefinitionSchema.parse(command.category);
         const { data, error } = await client.from("categories").insert({ ...category, wallet_id: walletId }).select().single();
@@ -72,6 +71,5 @@ export function createWalletRepository(client: SupabaseClient<Database>, walletI
       // Undoing an edit must compare against the version just committed.
       return { data: current, previous: previous && saved ? { ...previous, version: saved.version } : previous };
     },
-    subscribe() { return () => {}; },
   };
 }

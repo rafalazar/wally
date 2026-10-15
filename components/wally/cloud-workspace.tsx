@@ -96,7 +96,7 @@ function SharingPanel({ identity, wallet, onChanged, onClose }: {
 function ActiveWallet({ identity, wallet, children }: { identity: Identity; wallet: CloudWallet; children: ReactNode }) {
   const repository = useMemo(() => createWalletRepository(identity.client, wallet.id), [identity.client, wallet.id]);
   const name = identity.user.user_metadata.full_name || identity.user.email || "Mi cuenta";
-  return <WallyProvider repository={repository} scope={`${identity.user.id}:${wallet.id}`} cloud displayName={name} signOut={identity.signOut}>{children}</WallyProvider>;
+  return <WallyProvider repository={repository} scope={`${identity.user.id}:${wallet.id}`} displayName={name} signOut={identity.signOut}>{children}</WallyProvider>;
 }
 
 export function CloudWorkspace({ identity, children }: { identity: Identity; children: ReactNode }) {

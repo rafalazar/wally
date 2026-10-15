@@ -1,3 +1,3 @@
-import { LocalWallyApp } from "@/components/wally/wally-app";
+import { redirect } from "next/navigation";
 
-export default function DemoPage() { return <LocalWallyApp />; }
+export default function DemoPage() { redirect("/"); }

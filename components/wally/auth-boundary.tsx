@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import Link from "next/link";
 import { z } from "zod";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
@@ -12,7 +11,7 @@ import { Icon } from "./icon";
 
 export type Identity = { client: SupabaseClient<Database>; user: User; signOut: () => Promise<void> };
 
-export function AuthBoundary({ children }: { children: (identity: Identity | null) => ReactNode }) {
+export function AuthBoundary({ children }: { children: (identity: Identity) => ReactNode }) {
   const [client] = useState(() => supabaseConfig() ? createClient() : null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(!!client);
@@ -53,7 +52,7 @@ export function AuthBoundary({ children }: { children: (identity: Identity | nul
       if (!response.ok) throw new Error("No se pudo verificar el proveedor.");
       const settings = z.object({ external: z.object({ google: z.boolean().optional() }) }).parse(await response.json());
       if (!settings.external.google) {
-        setError("El inicio de sesión con Google aún está en configuración. Puedes explorar la demo mientras tanto.");
+        setError("El inicio de sesión con Google no está disponible en este momento. Inténtalo más tarde.");
         setBusy(false); return;
       }
       const { error } = await client.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/auth/callback` } });
@@ -70,19 +69,18 @@ export function AuthBoundary({ children }: { children: (identity: Identity | nul
     toast.dismiss(); setUser(null);
   }
 
-  if (!client) return <><div className="connection-notice" role="status">Modo local · La sincronización con Supabase aún no está configurada.</div>{children(null)}</>;
   if (loading) return <main className="auth-page"><div className="view-loading" role="status"><Icon name="loader" className="spin" />Verificando tu sesión...</div></main>;
-  if (user) return children({ client, user, signOut });
+  if (client && user) return children({ client, user, signOut });
   return <main className="auth-page"><section className="auth-card" aria-labelledby="login-title">
     <span className="brand-mark"><Icon name="wallet" size={32} /></span>
     <span className="section-kicker">BIENVENIDO A WALLY</span>
     <h1 id="login-title">Tus cuentas, contigo.</h1>
     <p>Registra tus ingresos y gastos en soles. Organiza tu billetera personal y comparte otra con quienes tú elijas.</p>
-    <button className="primary-button full-width" onClick={() => void signIn()} disabled={busy}>
+    <button className="primary-button full-width" onClick={() => void signIn()} disabled={!client || busy}>
       <Icon name={busy ? "loader" : "arrow"} className={busy ? "spin" : undefined} size={20} />
       {busy ? "Conectando con Google..." : "Continuar con Google"}
     </button>
-    <Link className="text-button" href="/demo">Explorar la demo en este navegador</Link>
+    {!client && <div className="inline-error" role="alert">El inicio de sesión no está disponible en este momento. Inténtalo más tarde.</div>}
     {error && <div className="inline-error" role="alert">{error}</div>}
     <p className="small-print">Tu billetera personal es privada. Solo los miembros de una billetera compartida pueden ver y editar sus movimientos.</p>
   </section></main>;

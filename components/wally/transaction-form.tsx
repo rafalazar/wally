@@ -9,7 +9,7 @@ import {
   localDate, MAX_AMOUNT_CENTS, parseAmount, paymentMethods,
   createTransactionFormSchema, type Transaction, type TransactionFormValues, type TransactionType,
 } from "@/lib/finance";
-import { useCategories, useUi, useWallet, useWorkspace } from "./wally-provider";
+import { useCategories, useUi, useWallet } from "./wally-provider";
 import { Icon } from "./icon";
 
 type Props = {
@@ -22,7 +22,6 @@ type Props = {
 export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
   const categories = useCategories();
   const wallet = useWallet();
-  const { cloud } = useWorkspace();
   const id = useId();
   const preferences = useUi(state => state.preferences);
   const remember = useUi(state => state.remember);
@@ -86,7 +85,6 @@ export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
         paymentMethod: data.paymentMethod,
         date: data.date,
         createdAt: initial?.createdAt ?? new Date().toISOString(),
-        isDemo: initial?.isDemo ?? false,
         version: baseVersion,
       });
       remember(data.type, { category: data.category, paymentMethod: data.paymentMethod });
@@ -220,7 +218,7 @@ export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
         </div>
       </fieldset>
     </form>
-    {!initial && <p className="save-reassurance"><Icon name="shield" size={14} />{cloud ? "Tus movimientos se guardan en tu billetera de Wally." : "Tus movimientos se guardan en este navegador."}</p>}
+    {!initial && <p className="save-reassurance"><Icon name="shield" size={14} />Tus movimientos se guardan en tu billetera de Wally.</p>}
   </section>;
 }
 

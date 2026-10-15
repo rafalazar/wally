@@ -94,7 +94,6 @@ export const transactionSchema = z.object({
   paymentMethod: paymentSchema,
   date: dateSchema,
   createdAt: z.string().refine(value => Number.isFinite(Date.parse(value))),
-  isDemo: z.boolean(),
   version: z.number().int().positive().optional(),
 }).refine(item => !categories.some(c => c.id === item.category && c.type !== item.type), {
   message: "Elige una categoría para este tipo de movimiento.", path: ["category"],
@@ -102,7 +101,6 @@ export const transactionSchema = z.object({
 
 export const walletSchema = z.object({
   version: z.literal(1),
-  demo: z.boolean(),
   transactions: z.array(transactionSchema),
   currency: z.literal("PEN").default("PEN"),
   categories: z.array(categoryDefinitionSchema).default(() => categories.map(c => ({ ...c }))),
@@ -141,12 +139,6 @@ export type Transaction = z.infer<typeof transactionSchema>;
 export type WalletData = z.infer<typeof walletSchema>;
 export type TransactionFormValues = z.infer<typeof transactionFormSchema>;
 
-export function decodeWallet(raw: string): WalletData {
-  const result = walletSchema.safeParse(JSON.parse(raw));
-  if (!result.success) throw new Error("No se pudieron leer los movimientos guardados. Los datos originales se conservan.");
-  return result.data;
-}
-
 export function summarize(transactions: Transaction[], today = localDate()) {
   let balance = 0, income = 0, expense = 0, incomeCount = 0, expenseCount = 0;
   for (const item of transactions) {
@@ -173,49 +165,9 @@ export function transactionsToCsv(transactions: Transaction[], catalog: readonly
     item.date, item.type === "income" ? "Ingreso" : "Gasto", item.description,
     catalog.find(c => c.id === item.category)?.label ?? item.category,
     paymentMethods.find(m => m.id === item.paymentMethod)!.fullLabel,
-    (item.amountCents / 100).toFixed(2), "PEN", item.isDemo ? "Ejemplo" : "Personal",
+    (item.amountCents / 100).toFixed(2), "PEN",
   ]);
-  const headers = ["Fecha", "Tipo", "Detalle", "Categoría", "Método", "Monto", "Moneda", "Origen"];
+  const headers = ["Fecha", "Tipo", "Detalle", "Categoría", "Método", "Monto", "Moneda"];
   return "\uFEFF" + [headers, ...rows].map(row => row.map(csvCell).join(",")).join("\r\n");
 }
-
-export function createDemoWallet(today = localDate()): WalletData {
-  const day = Number(today.slice(-2));
-  const dateBefore = (offset: number) => `${today.slice(0, 8)}${String(Math.max(1, day - offset)).padStart(2, "0")}`;
-  const entries: [TransactionType, number, string, CategoryId, PaymentMethod][] = [
-    ["expense", 850, "Cafetería & Desayuno", "food", "debit"],
-    ["income", 145000, "Pago por Proyecto Freelance", "freelance", "transfer"],
-    ["expense", 6420, "Compras de la Semana", "shopping", "credit"],
-    ["income", 400000, "Sueldo del mes", "salary", "transfer"],
-    ["income", 50000, "Diseño de identidad", "freelance", "transfer"],
-    ["income", 25000, "Venta de escritorio", "sales", "cash"],
-    ["expense", 62000, "Alquiler y servicios del hogar", "services", "transfer"],
-    ["expense", 8500, "Internet y teléfono", "services", "debit"],
-    ["expense", 12900, "Supermercado", "shopping", "debit"],
-    ["expense", 4500, "Cena con amigos", "food", "credit"],
-    ["expense", 2500, "Taxi a casa", "transport", "cash"],
-    ["expense", 3500, "Farmacia", "health", "debit"],
-    ["expense", 2200, "Entradas al cine", "entertainment", "credit"],
-    ["expense", 1800, "Almuerzo del viernes", "food", "debit"],
-    ["expense", 6500, "Zapatillas nuevas", "shopping", "credit"],
-    ["expense", 1200, "Viajes en transporte", "transport", "cash"],
-    ["expense", 1500, "Suscripciones del mes", "entertainment", "debit"],
-    ["expense", 5000, "Consulta médica", "health", "debit"],
-    ["expense", 2600, "Frutas y verduras", "food", "cash"],
-    ["expense", 800, "Café de la tarde", "food", "cash"],
-    ["expense", 1700, "Taxi al trabajo", "transport", "debit"],
-    ["expense", 1900, "Libros", "shopping", "credit"],
-    ["expense", 2300, "Pizza del domingo", "food", "debit"],
-    ["expense", 3800, "Gimnasio", "health", "debit"],
-    ["expense", 1530, "Desayuno del sábado", "food", "cash"],
-    ["expense", 1000, "Música y entretenimiento", "entertainment", "debit"],
-  ];
-  return { version: 1, currency: "PEN", categories: categories.map(c => ({ ...c })), demo: true, transactions: entries.map(([type, amountCents, description, category, paymentMethod], i) => ({
-    id: `demo-${i}`, type, amountCents, description, category, paymentMethod, date: dateBefore(i),
-    createdAt: new Date(new Date(`${today}T00:00:00`).getTime() - i * 60_000).toISOString(), isDemo: true,
-  })) };
-}
-
-
-
 

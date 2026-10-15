@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { PGlite } from '@electric-sql/pglite';
+import { summarize } from '../lib/finance.ts';
 
 test('PostgreSQL migrations, isolation, sharing and financial integrity', async t => {
   const db = new PGlite();
@@ -36,8 +37,15 @@ test('PostgreSQL migrations, isolation, sharing and financial integrity', async 
     (await tx.query('select public.mutate_transaction($1,$2,$3::jsonb,$4) as result', [wallet, action, JSON.stringify(item), version])).rows[0].result);
   const movement = (overrides = {}) => ({ id: randomUUID(), type: 'expense', amountCents: 850, description: 'Café', category: 'food', paymentMethod: 'cash', date: '2026-01-01', ...overrides });
 
-  await t.test('registration provisions a private PEN wallet and twelve categories', async () => {
+  await t.test('registration provisions an empty private PEN wallet and twelve categories', async () => {
     assert.equal(wallets.length, 3);
+    for (const wallet of wallets) {
+      const snapshot = (await asUser(wallet.owner_id, tx => tx.query('select public.get_wallet($1) as data', [wallet.id]))).rows[0].data;
+      assert.deepEqual(snapshot.transactions, []);
+      assert.equal(snapshot.categories.length, 12);
+      assert.equal(snapshot.wallet.kind, 'personal');
+      assert.deepEqual(summarize(snapshot.transactions), { balance: 0, income: 0, expense: 0, incomeCount: 0, expenseCount: 0 });
+    }
     assert.equal((await db.query('select * from public.categories')).rows.length, 36);
     const result = await asUser(alice, tx => tx.query('select * from public.wallets'));
     assert.equal(result.rows.length, 1); assert.equal(result.rows[0].currency_code, 'PEN');

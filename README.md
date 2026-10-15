@@ -19,11 +19,11 @@ entorno es `zuzecdskahfsoiodgvrx`.
 
 - `/`: acceso con Google y billeteras de la cuenta.
 - `/auth/callback`: intercambio del código OAuth y creación de la sesión.
-- `/demo`: ejemplos en soles, guardados únicamente en el navegador.
-- Sin variables de Supabase, la aplicación muestra el modo local explícitamente.
+- `/demo`: redirige al inicio de sesión para los enlaces antiguos.
+- El acceso requiere una sesión de Google. Sin variables de Supabase, se muestra
+  el inicio de sesión como no disponible y no se abre ninguna billetera local.
 
-La base remota ya tiene la migración inicial. Falta crear el cliente OAuth de
-Google Cloud y habilitarlo en Supabase para completar el inicio de sesión real.
+La base remota tiene la migración inicial y Google está habilitado en Supabase.
 Consulta [la guía de Supabase y Google](docs/supabase-setup.md).
 
 ## Comprobaciones
@@ -37,7 +37,7 @@ node scripts/check-supabase.mjs
 
 Los tests usan PostgreSQL en memoria mediante PGlite y no escriben en tu proyecto
 remoto. Comprueban permisos entre usuarios, invitaciones, relaciones, concurrencia,
-validación monetaria, categorías, exportación y persistencia local. El último
+validación monetaria, categorías, exportación y billeteras nuevas vacías. El último
 comando verifica la conexión real, el proveedor Google y el bloqueo de acceso
 anónimo; requiere conexión a internet y no imprime claves.
 
@@ -46,7 +46,8 @@ anónimo; requiere conexión a internet y no imprime claves.
 `profiles`, `wallets`, `wallet_members`, `categories`, `transactions`,
 `wallet_invitations`, `currencies` y `payment_methods`, además de `auth.users`.
 
-- Cada usuario recibe una billetera personal y doce categorías iniciales.
+- Cada usuario recibe una billetera personal vacía, con saldo cero y doce
+  categorías iniciales para registrar sus propios movimientos.
 - El propietario crea billeteras compartidas y gestiona sus miembros.
 - Todos los miembros pueden ver, registrar, editar y eliminar sus movimientos.
 - Los códigos de invitación son de un solo uso, vencen a los siete días y se
@@ -68,8 +69,9 @@ anónimo; requiere conexión a internet y no imprime claves.
 - `proxy.ts`: renovación y validación de sesión, con respuestas sin caché compartida.
 - `components/wally/`: autenticación, billeteras, formularios, historial y resumen.
 - `lib/finance.ts`: esquemas Zod, dinero, categorías, fechas y CSV.
-- `lib/wallet-store.ts`: repositorio local de la demo.
+- `lib/wallet-store.ts`: tipos de operaciones del repositorio de billeteras.
 
-Los registros anteriores bajo `wally.wallet.v1` eran USD y se conservan intactos.
-La demo en soles usa `wally.wallet.pen.v1`. No hay conversión ni importación
-silenciosa de los datos anteriores; tampoco se suben ejemplos a Supabase.
+Wally ya no genera datos de ejemplo ni lee billeteras locales. Los registros
+antiguos de este navegador no se muestran ni se importan a ninguna cuenta.
+En el navegador solo se conservan las preferencias separadas por usuario y
+billetera, además de la sesión gestionada por Supabase.

@@ -8,7 +8,7 @@
 - Ocho tablas con RLS activado, relaciones, índices y permisos explícitos.
 - URL y clave publicable configuradas en `.env.local`, excluido de Git.
 - Registro abierto; acceso anónimo a movimientos rechazado por la API.
-- Google todavía está deshabilitado: falta crear y configurar el cliente OAuth.
+- Google habilitado y registro abierto, verificados con `scripts/check-supabase.mjs`.
 - Dominio y despliegue de producción todavía no definidos.
 
 ## Decisiones de esta versión
@@ -42,7 +42,7 @@ independientes que puedan quedar desactualizados. El perfil y las categorías se
 crean automáticamente al registrar una identidad. Las billeteras remotas nuevas
 empiezan sin movimientos de ejemplo.
 
-## Completar Google OAuth
+## Configurar Google OAuth en otro entorno
 
 1. En [Google Cloud](https://console.cloud.google.com/projectcreate), crea o
    selecciona un proyecto para Wally.
@@ -78,7 +78,7 @@ desplegar. No uses comodines amplios para las redirecciones de producción.
 `npm test` ejecuta las migraciones en PostgreSQL en memoria, con usuarios
 independientes y roles `anon` y `authenticated`. Prueba aislamiento, relación entre
 billetera/categoría/tipo, invitaciones y retirada de miembros, conflictos de
-edición, validación monetaria y conservación de los datos locales.
+edición, validación monetaria y creación de billeteras vacías con saldo cero.
 
 La revisión remota de seguridad señala cuatro RPC `SECURITY DEFINER` ejecutables
 por usuarios autenticados: creación de billeteras, creación/aceptación de
@@ -89,13 +89,14 @@ incluyen intentos de uso desde cuentas ajenas. Consultar el
 [aviso y criterios de revisión de Supabase](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable).
 
 La sincronización usa consultas periódicas cada 30 segundos y al recuperar foco;
-no se promete funcionamiento sin conexión ni sincronización instantánea. El flujo
-real de Google con dos cuentas queda pendiente de habilitar el proveedor. La demo
-permite verificar la interfaz sin crear usuarios remotos de prueba.
+no se promete funcionamiento sin conexión ni sincronización instantánea. Google
+está habilitado; la verificación del flujo completo con dos cuentas se realiza
+iniciando sesión en el navegador.
 
-Los datos locales anteriores identificados como USD siguen bajo `wally.wallet.v1`.
-La demo PEN usa otra clave. No se importan ni convierten automáticamente; primero
-hay que definir qué representan esos importes y si se desean conservar en la nube.
+El único acceso a las billeteras es mediante Google. La antigua ruta `/demo`
+redirige a `/` y la aplicación no genera ni carga movimientos de ejemplo. Las
+billeteras locales anteriores no se leen ni se importan a Supabase. Las categorías
+iniciales y los métodos de pago son catálogos para registrar movimientos propios.
 
 ## Referencias
 

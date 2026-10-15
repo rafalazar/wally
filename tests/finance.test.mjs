@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createDemoWallet, decodeWallet, isValidDate, localDate, parseAmount, recentFirst, summarize, transactionsToCsv } from '../lib/finance.ts';
+import { categories, walletSchema, isValidDate, localDate, parseAmount, recentFirst, summarize, transactionsToCsv } from '../lib/finance.ts';
 import { buildMonthlyInsights, defaultFilters, filterTransactions } from '../lib/insights.ts';
 
-const movement = (overrides = {}) => ({ id: 'test-1', type: 'expense', amountCents: 850, description: 'Café', category: 'food', paymentMethod: 'debit', date: '2026-09-14', createdAt: '2026-09-14T15:00:00.000Z', isDemo: false, ...overrides });
+const movement = (overrides = {}) => ({ id: 'test-1', type: 'expense', amountCents: 850, description: 'Café', category: 'food', paymentMethod: 'debit', date: '2026-09-14', createdAt: '2026-09-14T15:00:00.000Z', ...overrides });
 
 test('custom categories remain consistent across search, charts and PEN exports', () => {
-  const catalog = [...createDemoWallet().categories, { id: 'pets', type: 'expense', label: 'Veterinária', emoji: '🐈', tone: 'green', color: '#79bea8' }];
+  const catalog = [...categories, { id: 'pets', type: 'expense', label: 'Veterinária', emoji: '🐈', tone: 'green', color: '#79bea8' }];
   const items = [movement({ category: 'pets', amountCents: 12345 })];
   assert.equal(filterTransactions(items, { ...defaultFilters, search: 'veterinaria' }, catalog).length, 1);
   const summary = buildMonthlyInsights(items, '2026-09', '2026-09-15', catalog);
@@ -40,35 +40,25 @@ test('monthly income and expenses are separate from all-time balance', () => {
   assert.deepEqual(summarize(items, '2026-09-14'), { balance:7150, income:10000, expense:850, incomeCount:1, expenseCount:1 });
   assert.deepEqual(summarize([], '2026-09-14'), { balance:0, income:0, expense:0, incomeCount:0, expenseCount:0 });
 });
-test('demo rows reconcile to the reference, even on the first day of a month', () => {
-  for (const today of ['2026-09-14', '2026-10-01']) {
-    const demo = createDemoWallet(today);
-    assert.equal(demo.transactions.length, 26);
-    assert.deepEqual(summarize(demo.transactions, today), { balance:485000, income:620000, expense:135000, incomeCount:4, expenseCount:22 });
-    assert.equal(demo.transactions.every(item => item.isDemo && item.date <= today), true);
-    assert.deepEqual(decodeWallet(JSON.stringify(demo)), demo);
-  }
-});
-test('malformed saved data and incompatible category types are rejected', () => {
-  const wallet = (transactions) => JSON.stringify({ version:1, demo:false, transactions });
-  assert.throws(() => decodeWallet('{broken'));
-  assert.throws(() => decodeWallet(wallet([movement({ amountCents:8.5 })])));
-  assert.throws(() => decodeWallet(wallet([movement({ type:'income' })])));
-  assert.throws(() => decodeWallet(wallet([movement(), movement()])));
-  assert.throws(() => decodeWallet(wallet([movement({ date:'2026-02-30' })])));
-  assert.throws(() => decodeWallet(wallet([movement({ description:' ' })])));
-  assert.deepEqual(decodeWallet(wallet([movement()])).transactions, [movement()]);
+test('malformed wallet data and incompatible category types are rejected', () => {
+  const wallet = (transactions) => ({ version:1, transactions });
+  assert.throws(() => walletSchema.parse(wallet([movement({ amountCents:8.5 })])));
+  assert.throws(() => walletSchema.parse(wallet([movement({ type:'income' })])));
+  assert.throws(() => walletSchema.parse(wallet([movement(), movement()])));
+  assert.throws(() => walletSchema.parse(wallet([movement({ date:'2026-02-30' })])));
+  assert.throws(() => walletSchema.parse(wallet([movement({ description:' ' })])));
+  assert.deepEqual(walletSchema.parse(wallet([movement()])).transactions, [movement()]);
 });
 test('CSV preserves cents, accents and quotes, and neutralizes formulas', () => {
   const csv = transactionsToCsv([movement({ description:'=SUM(A1)' }), movement({ id:'2', description:'Café, "grande"\ncon leche' })]);
   assert.ok(csv.startsWith('\uFEFF'));
   assert.ok(csv.includes('"\'=SUM(A1)"'));
   assert.ok(csv.includes('"Café, ""grande""\ncon leche"'));
-  assert.ok(csv.includes('"8.50","PEN","Personal"'));
+  assert.ok(csv.includes('"8.50","PEN"'));
 });
 
-test("a real movement added after midnight precedes every demo row", () => {
-  const demo = createDemoWallet("2026-09-15");
-  const fresh = movement({ id: "after-midnight", date: "2026-09-15", createdAt: new Date("2026-09-15T00:00:01").toISOString() });
-  assert.equal(recentFirst([...demo.transactions, fresh])[0].id, "after-midnight");
+test("new movements sort before earlier records across midnight", () => {
+  const previous = movement({ createdAt: "2026-09-14T23:59:59.000Z" });
+  const fresh = movement({ id: "after-midnight", date: "2026-09-15", createdAt: "2026-09-15T00:00:01.000Z" });
+  assert.equal(recentFirst([previous, fresh])[0].id, "after-midnight");
 });

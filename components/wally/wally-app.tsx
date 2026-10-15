@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
 import { localDate, recentFirst, summarize, formatMoney, type CategoryId, type Transaction } from "@/lib/finance";
@@ -11,12 +10,12 @@ import { downloadTransactions } from "@/lib/export";
 import { type WalletCommand } from "@/lib/wallet-store";
 import { Header } from "./header";
 import { Icon } from "./icon";
-import { HelpPanel, PersonalPanel, PrivacyPanel } from "./info-panels";
+import { HelpPanel, PrivacyPanel } from "./info-panels";
 import { Metrics } from "./metrics";
 import { Modal } from "./modal";
 import { TransactionForm } from "./transaction-form";
 import { EmptyState, History, TransactionDetail, TransactionRow } from "./transaction-history";
-import { WallyProvider, useCategories, useUi, useWallet, useWorkspace } from "./wally-provider";
+import { useCategories, useUi, useWallet } from "./wally-provider";
 import { AuthBoundary } from "./auth-boundary";
 import { CloudWorkspace } from "./cloud-workspace";
 
@@ -24,12 +23,11 @@ const Insights = dynamic(() => import("./insights"), {
   ssr: false,
   loading: () => <div className="view-loading" role="status"><Icon name="loader" className="spin" />Preparando tu resumen...</div>,
 });
-type OpenModal = { kind: "help" | "privacy" | "personal" } | { kind: "detail"; id: string };
+type OpenModal = { kind: "help" | "privacy" } | { kind: "detail"; id: string };
 const emptyTransactions: Transaction[] = [];
 
 function WalletScreen() {
   const wallet = useWallet();
-  const { cloud } = useWorkspace();
   const categories = useCategories();
   const transactions = wallet.isError ? emptyTransactions : wallet.data?.transactions ?? emptyTransactions;
   const ready = !!wallet.data && !wallet.isError;
@@ -84,21 +82,18 @@ function WalletScreen() {
     window.scrollTo({ top: 0, behavior: "instant" });
   }
   function closeModal() { if (!wallet.saving) setModal(null); }
-  const modalTitle = modal?.kind === "detail" ? "Tu movimiento" : modal?.kind === "help" ? "Tus cuentas, sin complicaciones" : modal?.kind === "privacy" ? "Tu información, bajo tu control" : "Hagamos espacio para lo tuyo";
+  const modalTitle = modal?.kind === "detail" ? "Tu movimiento" : modal?.kind === "help" ? "Tus cuentas, sin complicaciones" : "Tu información, bajo tu control";
 
   return <div className="wally-app">
     <a className="skip-link" href="#main">Ir al contenido</a>
-    <Header balance={ready ? totals.balance : undefined} demo={!!wallet.data?.demo}
-      onPersonal={() => setModal({ kind: "personal" })} onHelp={() => setModal({ kind: "help" })}
+    <Header balance={ready ? totals.balance : undefined} onHelp={() => setModal({ kind: "help" })}
       onPrivacy={() => setModal({ kind: "privacy" })} onExport={() => exportTransactions()} />
     <main className="main-content" id="main">
       <div className="overview-context">
         <p><Icon name="calendar" size={14} /><span>Tu espacio financiero</span><span className="context-divider">/</span>
           {ready ? new Intl.DateTimeFormat("es", { month: "long", year: "numeric" }).format(new Date(`${localDate()}T12:00:00`)) : "Bienvenido"}
         </p>
-        {wallet.data?.demo ? <button className="demo-label" onClick={() => setModal({ kind: "personal" })}>
-          <span className="demo-dot" />Datos de ejemplo<span className="demo-action">Usar mis datos <Icon name="arrow" size={13} /></span>
-        </button> : <span className="local-label"><span className="status-dot" />{ready ? cloud ? "Guardado en Supabase" : "Guardado local" : "Preparando tu espacio"}</span>}
+        <span className="sync-label"><span className="status-dot" />{ready ? "Guardado en tu cuenta" : "Preparando tu espacio"}</span>
       </div>
       {wallet.isError && <div className="storage-error" role="alert"><Icon name="info" />
         <span>{wallet.error.message}</span><button className="text-button" onClick={() => void wallet.refetch()} disabled={wallet.isFetching}>Reintentar</button>
@@ -147,14 +142,6 @@ function WalletScreen() {
       {modal.kind === "detail" && (selected
         ? <TransactionDetail key={selected.id} transaction={selected} onSave={update} onDelete={() => remove(selected.id)} />
         : <div className="empty-state"><Icon name="info" /><h3>Este movimiento ya no está disponible</h3><p>Puede haberse eliminado desde otra pestaña.</p></div>)}
-      {modal.kind === "personal" && <PersonalPanel exampleCount={transactions.filter(item => item.isDemo).length} onClose={closeModal}
-        onConfirm={async () => {
-          await wallet.execute({ type: "start-personal" });
-          setModal(null);
-          toast.dismiss("wallet-change");
-          toast.success("Tu espacio está listo. Vamos paso a paso.");
-          navigate("register");
-        }} />}
       {modal.kind === "help" && <HelpPanel />}
       {modal.kind === "privacy" && <PrivacyPanel onExport={() => { setModal(null); exportTransactions(); }} />}
     </Modal>}</AnimatePresence>
@@ -162,13 +149,7 @@ function WalletScreen() {
 }
 
 export function WallyApp() {
-  return <AuthBoundary>{identity => identity
-    ? <CloudWorkspace key={identity.user.id} identity={identity}><WalletScreen /></CloudWorkspace>
-    : <WallyProvider><WalletScreen /></WallyProvider>}
+  return <AuthBoundary>{identity =>
+    <CloudWorkspace key={identity.user.id} identity={identity}><WalletScreen /></CloudWorkspace>}
   </AuthBoundary>;
-}
-
-export function LocalWallyApp() {
-  return <><div className="connection-notice">Demo en soles · Los cambios se guardan solo en este navegador. <Link href="/">Volver al inicio de sesión</Link></div>
-    <WallyProvider><WalletScreen /></WallyProvider></>;
 }

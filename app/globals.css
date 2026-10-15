@@ -51,8 +51,7 @@ svg { flex-shrink: 0; }
 .header-actions { display: flex; align-items: center; gap: 14px; }
 .balance-pill { display: flex; align-items: center; gap: 9px; padding: 11px 14px; border: 1px solid var(--border); background: #fff; border-radius: 25px; }
 .balance-pill strong { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.status-dot, .demo-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #68b89b; flex-shrink: 0; }
-.demo-dot { background: #c4a26b; }
+.status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #68b89b; flex-shrink: 0; }
 .icon-button { display: inline-flex; width: 40px; height: 40px; padding: 0; align-items: center; justify-content: center; border-radius: 12px; color: var(--muted); flex-shrink: 0; }
 .icon-button:hover { background: #f1eee9; color: var(--foreground); }
 .account-anchor { padding-left: 14px; border-left: 1px solid var(--border); }
@@ -68,7 +67,7 @@ svg { flex-shrink: 0; }
 .popover-profile { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; }
 .popover-profile strong { font-size: 13px; }
 .popover-profile p { font-size: 11px; margin-top: 4px; color: var(--muted); }
-.local-account-info { display: flex; align-items: center; gap: 7px; padding: 11px; background: var(--green-light); border-radius: 9px; color: #34765f; font-size: 11px; margin-bottom: 12px; }
+.account-sync-info { display: flex; align-items: center; gap: 7px; padding: 11px; background: var(--green-light); border-radius: 9px; color: #34765f; font-size: 11px; margin-bottom: 12px; }
 .popover-action { display: flex; align-items: center; gap: 10px; padding: 12px 8px; border-radius: 9px; width: 100%; text-align: left; font-size: 12px; }
 .popover-action > svg:last-child { margin-left: auto; }
 .popover-action:hover { background: #faf7f3; }
@@ -77,10 +76,7 @@ svg { flex-shrink: 0; }
 .overview-context { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 22px; min-height: 28px; font-size: 11px; color: var(--muted); }
 .overview-context > p { display: flex; align-items: center; gap: 8px; }
 .context-divider { color: #c5c0b9; margin: 0 3px; }
-.demo-label { display: inline-flex; align-items: center; gap: 7px; color: #7d705e; font-size: 10px; padding: 8px 0; }
-.demo-action { display: flex; align-items: center; gap: 5px; border-left: 1px solid var(--border); margin-left: 5px; padding-left: 10px; font-weight: 700; color: #615747; }
-.demo-label:hover .demo-action { color: var(--coral-dark); }
-.local-label { display: inline-flex; align-items: center; gap: 7px; font-size: 10px; }
+.sync-label { display: inline-flex; align-items: center; gap: 7px; font-size: 10px; }
 .metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
 .metric-card { padding: 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 1px solid var(--border); border-radius: 22px; background: #fff; box-shadow: var(--shadow); }
 .metric-content { min-width: 0; }
@@ -309,9 +305,6 @@ svg { flex-shrink: 0; }
 .delete-confirm { margin-top: 24px; }
 .delete-confirm p { font-size: 12px; line-height: 1.8; color: #7b6670; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
-.welcome-illustration { position: relative; display: flex; justify-content: center; padding: 12px 0 30px; }
-.welcome-illustration .brand-mark { width: 76px; height: 76px; border-radius: 26px; transform: rotate(-8deg); }
-.welcome-sparkle { color: #d6a049; position: absolute; top: 6px; left: calc(50% + 45px); }
 .info-box { display: flex; align-items: flex-start; gap: 11px; background: #faf8f4; border: 1px solid #efeae3; border-radius: 13px; padding: 15px; margin-bottom: 23px; font-size: 12px; line-height: 1.9; color: #6d737e; }
 .info-box > svg { margin-top: 3px; color: #a3917a; }
 .info-box strong { font-weight: 650; color: #505866; }
@@ -398,8 +391,7 @@ svg { flex-shrink: 0; }
   .overview-context { align-items: flex-start; flex-wrap: wrap; row-gap: 6px; margin-bottom: 17px; }
   .overview-context > p { font-size: 10px; gap: 6px; }
   .overview-context > p > span:first-of-type, .context-divider { display: none; }
-  .demo-label, .local-label { font-size: 9px; padding: 2px 0; min-height: 22px; }
-  .demo-action { gap: 3px; margin-left: 2px; padding-left: 7px; }
+  .sync-label { font-size: 9px; padding: 2px 0; min-height: 22px; }
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .metric-card { border-radius: 17px; padding: 16px; }
   .metric-balance { grid-column: 1 / -1; }
