@@ -28,6 +28,10 @@ export type TransactionType = "expense" | "income";
 export type CategoryId = string;
 export type PaymentMethod = (typeof paymentMethods)[number]["id"];
 export const MAX_AMOUNT_CENTS = 99_999_999_999;
+export const INITIAL_BALANCE_CATEGORY = "opening_balance";
+export const initialBalanceCategory = {
+  id: INITIAL_BALANCE_CATEGORY, label: "Saldo inicial", emoji: "🌱", type: "income", tone: "green", color: "#008563",
+} as const;
 
 const currencyFormatter = new Intl.NumberFormat("es-PE", {
   style: "currency", currency: "PEN",
@@ -96,12 +100,16 @@ export const transactionSchema = z.object({
   amountCents: z.number().int().positive().max(MAX_AMOUNT_CENTS),
   description: descriptionSchema,
   category: categorySchema,
-  paymentMethod: paymentSchema,
+  paymentMethod: paymentSchema.nullable(),
   date: dateSchema,
   createdAt: z.string().refine(value => Number.isFinite(Date.parse(value))),
   version: z.number().int().positive().optional(),
 }).refine(item => !categories.some(c => c.id === item.category && c.type !== item.type), {
   message: "Elige una categoría para este tipo de movimiento.", path: ["category"],
+}).refine(item => item.category === INITIAL_BALANCE_CATEGORY
+  ? item.type === "income" && item.paymentMethod === null
+  : item.paymentMethod !== null && (item.type !== "income" || ["cash", "transfer"].includes(item.paymentMethod)), {
+  message: "El método de pago no corresponde a este movimiento.", path: ["paymentMethod"],
 });
 
 export const walletSchema = z.object({
@@ -134,6 +142,9 @@ export const createTransactionFormSchema = (catalog: readonly Category[] = categ
   if (!catalog.some(item => item.id === values.category && item.type === values.type)) {
     context.addIssue({ code: "custom", path: ["category"], message: "Selecciona una categoría válida." });
   }
+  if (values.category === INITIAL_BALANCE_CATEGORY) {
+    context.addIssue({ code: "custom", path: ["category"], message: "Saldo inicial está reservado para la bienvenida." });
+  }
   if (values.type === "income" && !["cash", "transfer"].includes(values.paymentMethod)) {
     context.addIssue({ code: "custom", path: ["paymentMethod"], message: "Elige efectivo o transferencia para este ingreso." });
   }
@@ -143,6 +154,16 @@ export const transactionFormSchema = createTransactionFormSchema();
 export type Transaction = z.infer<typeof transactionSchema>;
 export type WalletData = z.infer<typeof walletSchema>;
 export type TransactionFormValues = z.infer<typeof transactionFormSchema>;
+
+export const initialBalanceEditSchema = z.object({
+  amount: z.string().refine(value => parseAmount(value) !== null, "Ingresa un monto mayor a 0, con hasta 2 decimales."),
+  description: descriptionSchema,
+  date: dateSchema.refine(value => value >= "1900-01-01" && value <= localDate(), "La fecha debe ser hasta el día de hoy."),
+});
+
+export function restoredTransaction(transaction: Transaction): Transaction {
+  return { ...transaction, id: transaction.category === INITIAL_BALANCE_CATEGORY ? transaction.id : crypto.randomUUID() };
+}
 
 export function summarize(transactions: Transaction[], today = localDate()) {
   let balance = 0, income = 0, expense = 0, incomeCount = 0, expenseCount = 0;
@@ -169,7 +190,7 @@ export function transactionsToCsv(transactions: Transaction[], catalog: readonly
   const rows = transactions.map(item => [
     item.date, item.type === "income" ? "Ingreso" : "Gasto", item.description,
     catalog.find(c => c.id === item.category)?.label ?? item.category,
-    paymentMethods.find(m => m.id === item.paymentMethod)!.fullLabel,
+    paymentMethods.find(m => m.id === item.paymentMethod)?.fullLabel ?? "",
     (item.amountCents / 100).toFixed(2), "PEN",
   ]);
   const headers = ["Fecha", "Tipo", "Detalle", "Categoría", "Método", "Monto", "Moneda"];

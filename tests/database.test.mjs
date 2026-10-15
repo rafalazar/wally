@@ -18,12 +18,17 @@ test('PostgreSQL migrations, isolation, sharing and financial integrity', async 
     grant execute on function auth.uid() to anon, authenticated;
   `);
   const migrations = new URL('../supabase/migrations/', import.meta.url);
-  for (const file of (await readdir(migrations)).filter(f => f.endsWith('.sql')).sort()) {
+  const files = (await readdir(migrations)).filter(f => f.endsWith('.sql')).sort();
+  for (const file of files.filter(file => !file.endsWith('_initial_balance_onboarding.sql'))) {
     await db.exec(await readFile(new URL(file, migrations), 'utf8'));
   }
   const alice = randomUUID(), bob = randomUUID(), carol = randomUUID();
   for (const [id, name] of [[alice, 'Alice'], [bob, 'Bob'], [carol, 'Carol']]) {
     await db.query('insert into auth.users values ($1,$2)', [id, JSON.stringify({ full_name: name })]);
+  }
+  // This regression suite represents users that already used Wally before onboarding.
+  for (const file of files.filter(file => file.endsWith('_initial_balance_onboarding.sql'))) {
+    await db.exec(await readFile(new URL(file, migrations), 'utf8'));
   }
   const wallets = (await db.query('select id,owner_id from public.wallets')).rows;
   const aliceWallet = wallets.find(w => w.owner_id === alice).id;

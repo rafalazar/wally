@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
-import { localDate, recentFirst, summarize, formatMoney, type CategoryId, type Transaction } from "@/lib/finance";
+import { localDate, recentFirst, restoredTransaction, summarize, formatMoney, type CategoryId, type Transaction } from "@/lib/finance";
 import { defaultFilters } from "@/lib/insights";
 import { downloadTransactions } from "@/lib/export";
 import { type WalletCommand } from "@/lib/wallet-store";
@@ -65,7 +65,7 @@ function WalletScreen() {
   async function remove(id: string) {
     const result = await wallet.execute({ type: "remove", id, version: transactions.find(t => t.id === id)?.version });
     setModal(null);
-    if (result.previous) notifyWithUndo("Movimiento eliminado.", { type: "restore", transaction: { ...result.previous, id: crypto.randomUUID() } });
+    if (result.previous) notifyWithUndo("Movimiento eliminado.", { type: "restore", transaction: restoredTransaction(result.previous) });
   }
   function exportTransactions(items = transactions) {
     if (!items.length) { toast.info("Registra un movimiento para exportar tus cuentas."); return; }

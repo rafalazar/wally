@@ -1,12 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { z } from "zod";
 import { cloudWalletSchema, createWalletRepository, databaseError, type CloudWallet } from "@/lib/supabase/wallet-repository";
 import type { Identity } from "./auth-boundary";
 import { WallyProvider } from "./wally-provider";
 import { Icon } from "./icon";
 import { Modal } from "./modal";
+import { Onboarding, OnboardingSuccess } from "./onboarding";
+
+const onboardingProfileSchema = z.object({
+  onboarding_completed_at: z.string().nullable(), initial_transaction_id: z.uuid().nullable(),
+});
 
 const memberSchema = z.object({ user_id: z.uuid(), display_name: z.string(), role: z.enum(["owner", "member"]) });
 type Member = z.infer<typeof memberSchema>;
@@ -105,28 +110,55 @@ export function CloudWorkspace({ identity, children }: { identity: Identity; chi
   const [error, setError] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const [profile, setProfile] = useState<z.infer<typeof onboardingProfileSchema>>();
+  const [welcomeTransactionId, setWelcomeTransactionId] = useState<string | null>(null);
+  const loadRevision = useRef(0);
+  const completing = useRef(false);
+  const invalidateLoad = useCallback(() => { loadRevision.current++; }, []);
   const load = useCallback(async (id?: string) => {
-    const { data, error } = await identity.client.from("wallets").select("id,name,kind,currency_code,owner_id").order("created_at");
-    if (error) throw databaseError(error);
-    const items = z.array(cloudWalletSchema).parse(data);
-    setWallets(items); setError(""); setLoaded(true);
+    const revision = ++loadRevision.current;
+    const [walletResult, profileResult] = await Promise.all([
+      identity.client.from("wallets").select("id,name,kind,currency_code,owner_id").order("created_at"),
+      identity.client.from("profiles").select("onboarding_completed_at,initial_transaction_id").eq("id", identity.user.id).single(),
+    ]);
+    if (walletResult.error) throw databaseError(walletResult.error);
+    if (profileResult.error) throw databaseError(profileResult.error);
+    const items = z.array(cloudWalletSchema).parse(walletResult.data);
+    const nextProfile = onboardingProfileSchema.parse(profileResult.data);
+    if (revision !== loadRevision.current) return;
+    setWallets(items); setProfile(nextProfile); setError(""); setLoaded(true);
     if (id) setSelectedId(id);
-  }, [identity.client]);
+  }, [identity.client, identity.user.id]);
   useEffect(() => {
-    const refresh = () => { void load().catch(cause => { setError(cause.message); setLoaded(true); }); };
+    let active = true;
+    const refresh = () => {
+      if (!completing.current) void load().catch(cause => { if (active) { setError(cause.message); setLoaded(true); } });
+    };
     refresh();
     const interval = window.setInterval(refresh, 30000);
     window.addEventListener("focus", refresh);
-    return () => { window.clearInterval(interval); window.removeEventListener("focus", refresh); };
-  }, [load]);
+    return () => { active = false; invalidateLoad(); window.clearInterval(interval); window.removeEventListener("focus", refresh); };
+  }, [load, invalidateLoad]);
   const selected = wallets.find(w => w.id === selectedId) ?? wallets.find(w => w.kind === "personal") ?? wallets[0];
-  if (!selected) return <main className="auth-page"><section className="auth-card">
+  if (!selected || !profile) return <main className="auth-page"><section className="auth-card">
     <h1>{loaded ? "Preparemos tu billetera" : "Cargando tus billeteras..."}</h1>
     {error && <div className="inline-error" role="alert">{error}</div>}
     {loaded && !error && <p>No encontramos tu billetera personal. Revisa que la migración de Wally esté aplicada.</p>}
     <button className="secondary-button" onClick={() => void load().catch(cause => setError(cause.message))}>Reintentar</button>
     <button className="text-button" onClick={() => void identity.signOut().catch(cause => setError(cause.message))}>Cerrar sesión</button>
   </section></main>;
+  if (profile.onboarding_completed_at === null) return <Onboarding signOut={identity.signOut} connectionError={error}
+    onComplete={async amountCents => {
+      completing.current = true;
+      loadRevision.current++;
+      try {
+        const { data, error } = await identity.client.rpc("complete_onboarding", { p_amount_cents: amountCents });
+        if (error) throw databaseError(error);
+        const result = onboardingProfileSchema.extend({ wallet_id: z.uuid(), onboarding_completed_at: z.string() }).parse(data);
+        await load(result.wallet_id);
+        setWelcomeTransactionId(result.initial_transaction_id);
+      } finally { completing.current = false; }
+    }} />;
   return <>
     <div className="workspace-bar"><div>
       <label htmlFor="wallet-selector"><Icon name="wallet" size={17} />Billetera</label>
@@ -136,7 +168,10 @@ export function CloudWorkspace({ identity, children }: { identity: Identity; chi
       <button className="text-button" onClick={() => setSharing(true)}>Gestionar billeteras</button>
     </div></div>
     {error && <p className="connection-notice" role="alert">{error}</p>}
-    <ActiveWallet key={`${identity.user.id}:${selected.id}`} identity={identity} wallet={selected}>{children}</ActiveWallet>
+    <ActiveWallet key={`${identity.user.id}:${selected.id}`} identity={identity} wallet={selected}>
+      {welcomeTransactionId && <OnboardingSuccess transactionId={welcomeTransactionId} />}
+      {children}
+    </ActiveWallet>
     {sharing && <Modal title="Tus billeteras" onClose={() => setSharing(false)}>
       <SharingPanel key={selected.id} identity={identity} wallet={selected} onChanged={load} onClose={() => setSharing(false)} />
     </Modal>}

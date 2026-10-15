@@ -1,0 +1,330 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-15T20:19:54.210Z",
+  "title": "Design System: Wally",
+  "extensions": {
+    "colorMeta": {
+      "background": {
+        "role": "neutral",
+        "displayName": "Crema",
+        "tonalRamp": [
+          "oklch(15.00% 0.0041 91.45)",
+          "oklch(26.43% 0.0041 91.45)",
+          "oklch(37.86% 0.0041 91.45)",
+          "oklch(49.29% 0.0041 91.45)",
+          "oklch(60.71% 0.0041 91.45)",
+          "oklch(72.14% 0.0041 91.45)",
+          "oklch(83.57% 0.0041 91.45)",
+          "oklch(95.00% 0.0041 91.45)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Blanco",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "tonalRamp": [
+          "oklch(15.00% 0.0276 269.17)",
+          "oklch(26.43% 0.0276 269.17)",
+          "oklch(37.86% 0.0276 269.17)",
+          "oklch(49.29% 0.0276 269.17)",
+          "oklch(60.71% 0.0276 269.17)",
+          "oklch(72.14% 0.0276 269.17)",
+          "oklch(83.57% 0.0276 269.17)",
+          "oklch(95.00% 0.0276 269.17)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Gris de apoyo",
+        "tonalRamp": [
+          "oklch(15.00% 0.0308 260.28)",
+          "oklch(26.43% 0.0308 260.28)",
+          "oklch(37.86% 0.0308 260.28)",
+          "oklch(49.29% 0.0308 260.28)",
+          "oklch(60.71% 0.0308 260.28)",
+          "oklch(72.14% 0.0308 260.28)",
+          "oklch(83.57% 0.0308 260.28)",
+          "oklch(95.00% 0.0308 260.28)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Borde cálido",
+        "tonalRamp": [
+          "oklch(15.00% 0.0092 78.28)",
+          "oklch(26.43% 0.0092 78.28)",
+          "oklch(37.86% 0.0092 78.28)",
+          "oklch(49.29% 0.0092 78.28)",
+          "oklch(60.71% 0.0092 78.28)",
+          "oklch(72.14% 0.0092 78.28)",
+          "oklch(83.57% 0.0092 78.28)",
+          "oklch(95.00% 0.0092 78.28)"
+        ]
+      },
+      "coral": {
+        "role": "primary",
+        "displayName": "Coral",
+        "tonalRamp": [
+          "oklch(15.00% 0.1941 33.48)",
+          "oklch(26.43% 0.1941 33.48)",
+          "oklch(37.86% 0.1941 33.48)",
+          "oklch(49.29% 0.1941 33.48)",
+          "oklch(60.71% 0.1941 33.48)",
+          "oklch(72.14% 0.1941 33.48)",
+          "oklch(83.57% 0.1941 33.48)",
+          "oklch(95.00% 0.1941 33.48)"
+        ]
+      },
+      "coral-dark": {
+        "role": "primary",
+        "displayName": "Coral oscuro",
+        "tonalRamp": [
+          "oklch(15.00% 0.1918 33.35)",
+          "oklch(26.43% 0.1918 33.35)",
+          "oklch(37.86% 0.1918 33.35)",
+          "oklch(49.29% 0.1918 33.35)",
+          "oklch(60.71% 0.1918 33.35)",
+          "oklch(72.14% 0.1918 33.35)",
+          "oklch(83.57% 0.1918 33.35)",
+          "oklch(95.00% 0.1918 33.35)"
+        ]
+      },
+      "coral-light": {
+        "role": "primary",
+        "displayName": "Coral claro",
+        "tonalRamp": [
+          "oklch(15.00% 0.0146 44.18)",
+          "oklch(26.43% 0.0146 44.18)",
+          "oklch(37.86% 0.0146 44.18)",
+          "oklch(49.29% 0.0146 44.18)",
+          "oklch(60.71% 0.0146 44.18)",
+          "oklch(72.14% 0.0146 44.18)",
+          "oklch(83.57% 0.0146 44.18)",
+          "oklch(95.00% 0.0146 44.18)"
+        ]
+      },
+      "green": {
+        "role": "secondary",
+        "displayName": "Verde de ingresos",
+        "tonalRamp": [
+          "oklch(15.00% 0.1120 167.16)",
+          "oklch(26.43% 0.1120 167.16)",
+          "oklch(37.86% 0.1120 167.16)",
+          "oklch(49.29% 0.1120 167.16)",
+          "oklch(60.71% 0.1120 167.16)",
+          "oklch(72.14% 0.1120 167.16)",
+          "oklch(83.57% 0.1120 167.16)",
+          "oklch(95.00% 0.1120 167.16)"
+        ]
+      },
+      "green-light": {
+        "role": "secondary",
+        "displayName": "Verde claro",
+        "tonalRamp": [
+          "oklch(15.00% 0.0174 164.67)",
+          "oklch(26.43% 0.0174 164.67)",
+          "oklch(37.86% 0.0174 164.67)",
+          "oklch(49.29% 0.0174 164.67)",
+          "oklch(60.71% 0.0174 164.67)",
+          "oklch(72.14% 0.0174 164.67)",
+          "oklch(83.57% 0.0174 164.67)",
+          "oklch(95.00% 0.0174 164.67)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Importe principal",
+        "purpose": "Importe del registro; cifras tabulares y variante para valores largos."
+      },
+      "headline": {
+        "displayName": "Título de página",
+        "purpose": "Títulos de página y de registro."
+      },
+      "title": {
+        "displayName": "Título de sección",
+        "purpose": "Encabezados secundarios."
+      },
+      "body": {
+        "displayName": "Texto base",
+        "purpose": "Base del documento, con ajustes locales para explicaciones."
+      },
+      "label": {
+        "displayName": "Etiqueta",
+        "purpose": "Etiquetas de campos."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card",
+        "value": "0 12px 36px -18px rgb(43 35 25 / 13%), 0 1px 2px rgb(43 35 25 / 3%)",
+        "purpose": "Tarjetas de métricas e historial."
+      },
+      {
+        "name": "record-form",
+        "value": "0 16px 46px -24px rgb(72 49 28 / 18%), 0 1px 2px rgb(43 35 25 / 3%)",
+        "purpose": "Formulario de registro existente."
+      },
+      {
+        "name": "popover",
+        "value": "0 18px 60px -15px rgb(28 28 40 / 20%)",
+        "purpose": "Menú de cuenta."
+      },
+      {
+        "name": "dialog",
+        "value": "0 30px 100px rgb(19 20 29 / 20%)",
+        "purpose": "Diálogos existentes."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-state",
+        "value": ".18s ease",
+        "purpose": "Color, fondo, borde y sombra de controles."
+      },
+      {
+        "name": "onboarding-ready",
+        "value": ".22s cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Confirmación: translateY(4px) y blur(2px) a reposo; animation:none con prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "desktop-compact",
+        "value": "1100px"
+      },
+      {
+        "name": "workspace-stack",
+        "value": "820px"
+      },
+      {
+        "name": "onboarding-stack",
+        "value": "760px"
+      },
+      {
+        "name": "account-mobile",
+        "value": "640px"
+      },
+      {
+        "name": "workspace-mobile",
+        "value": "600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Acción principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Botón general coral de la aplicación existente.",
+      "html": "<button class=\"ds-primary\">Guardar cambios</button>",
+      "css": ".ds-primary{font-family:var(--font-jakarta,'Plus Jakarta Sans'),Arial,Helvetica,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 18px;min-height:44px;border:0;border-radius:11px;font-size:12px;font-weight:650;cursor:pointer;transition:color .18s,background-color .18s,border-color .18s,box-shadow .18s;background:var(--coral-dark,#d94324);color:var(--surface,#fff)}.ds-primary:hover{background:#c93e22}.ds-primary:focus-visible{outline:3px solid #ef987b;outline-offset:3px;}.ds-primary:disabled{cursor:not-allowed;opacity:.55}@media(prefers-reduced-motion:reduce){.ds-primary{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Acción secundaria",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Botón secundario con borde cálido.",
+      "html": "<button class=\"ds-secondary\">Cancelar</button>",
+      "css": ".ds-secondary{font-family:var(--font-jakarta,'Plus Jakarta Sans'),Arial,Helvetica,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 18px;min-height:44px;border:0;border-radius:11px;font-size:12px;font-weight:650;cursor:pointer;transition:color .18s,background-color .18s,border-color .18s,box-shadow .18s;background:#f7f5f1;color:var(--foreground,#1d2230);border:1px solid var(--border,#eae6e0)}.ds-secondary:hover{background:#eeeae4}.ds-secondary:focus-visible{outline:3px solid #ef987b;outline-offset:3px;}.ds-secondary:disabled{cursor:not-allowed;opacity:.55}@media(prefers-reduced-motion:reduce){.ds-secondary{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Empezar con este monto",
+      "kind": "button",
+      "refersTo": "button-income",
+      "description": "Acción verde de la bienvenida; ancho completo y flecha SVG.",
+      "html": "<button class=\"ds-income\"><span>Empezar con este monto</span><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
+      "css": ".ds-income{font-family:var(--font-jakarta,'Plus Jakarta Sans'),Arial,Helvetica,sans-serif;min-height:54px;width:100%;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:0;background:var(--green,#008563);color:white;border-radius:13px;font-size:14px;font-weight:700;cursor:pointer;transition:background-color .18s}.ds-income svg{flex-shrink:0}.ds-income:hover:not(:disabled){background:#006f52}.ds-income:focus-visible{outline:3px solid var(--green,#008563);outline-offset:4px}.ds-income:disabled{cursor:not-allowed;opacity:.55}@media(prefers-reduced-motion:reduce){.ds-income{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Navegación",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Selección de las tres áreas existentes, con opción activa blanca.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Principal\"><button class=\"ds-nav-active\" aria-current=\"page\">Registro</button><button>Movimientos</button><button>Resumen</button></nav>",
+      "css": ".ds-nav{font-family:var(--font-jakarta,'Plus Jakarta Sans'),Arial,Helvetica,sans-serif;display:flex;align-items:center;gap:4px;padding:4px;border:1px solid #ece8e2;border-radius:14px;background:#f1efea}.ds-nav button{font-family:var(--font-jakarta,'Plus Jakarta Sans'),Arial,Helvetica,sans-serif;min-height:40px;padding:0 16px;border:0;border-radius:10px;background:none;color:#707887;font-size:12px;font-weight:600;cursor:pointer;transition:color .18s}.ds-nav button.ds-nav-active{background:var(--surface,#fff);color:var(--foreground,#1d2230);box-shadow:0 2px 6px rgb(29 34 48 / 6%)}.ds-nav button:hover{color:var(--coral-dark,#d94324)}.ds-nav button:focus-visible{outline:3px solid #ef987b;outline-offset:3px;}@media(max-width:820px){.ds-nav{width:100%;justify-content:center}.ds-nav button{flex:1}}@media(max-width:600px){.ds-nav button{min-height:41px;font-size:11px;padding-inline:6px}}@media(prefers-reduced-motion:reduce){.ds-nav button{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Importe rápido",
+      "kind": "chip",
+      "refersTo": "amount-preset",
+      "description": "Atajo numérico del formulario de registro, mostrado en contexto de ingreso.",
+      "html": "<button class=\"ds-preset\" type=\"button\">S/ 50</button>",
+      "css": ".ds-preset{font-family:var(--font-jakarta,'Plus Jakarta Sans'),Arial,Helvetica,sans-serif;min-height:34px;min-width:46px;padding:5px 12px;border:0;background:#f3f4f6;border-radius:9px;color:#5e697b;font-size:12px;font-weight:600;cursor:pointer;transition:color .18s,background-color .18s}.ds-preset:hover{background:var(--accent-light,#effaf4);color:var(--accent-dark,#008260)}.ds-preset:focus-visible{outline:3px solid #ef987b;outline-offset:3px;}@media(prefers-reduced-motion:reduce){.ds-preset{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Tarjeta de cifra",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Contenedor blanco con borde y sombra ambiental.",
+      "html": "<article class=\"ds-card\"><div><h2>Saldo disponible</h2><p>S/ 1,250.50</p></div></article>",
+      "css": ".ds-card{font-family:var(--font-jakarta,'Plus Jakarta Sans'),Arial,Helvetica,sans-serif;padding:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--border,#eae6e0);border-radius:22px;background:var(--surface,#fff);color:var(--foreground,#1d2230);box-shadow:var(--shadow,0 12px 36px -18px rgb(43 35 25 / 13%),0 1px 2px rgb(43 35 25 / 3%))}.ds-card h2{margin:0;font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--muted,#6d788a)}.ds-card p{margin:6px 0 0;font-size:clamp(22px,2.2vw,29px);font-weight:800;letter-spacing:-.8px;line-height:1.45;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}"
+    },
+    {
+      "name": "Saldo inicial",
+      "kind": "input",
+      "description": "Importe de bienvenida con prefijo independiente, subrayado y foco verde.",
+      "html": "<label class=\"ds-amount-label\" for=\"ds-initial-amount\">Tu saldo inicial</label><div class=\"ds-amount\"><span aria-hidden=\"true\">S/</span><input id=\"ds-initial-amount\" inputmode=\"decimal\" placeholder=\"0.00\" aria-label=\"Tu saldo inicial en soles peruanos\"/></div>",
+      "css": ".ds-amount-label{font-family:var(--font-jakarta,'Plus Jakarta Sans'),Arial,Helvetica,sans-serif;display:block;font-size:16px;font-weight:700;color:var(--foreground,#1d2230)}.ds-amount{font-family:var(--font-jakarta,'Plus Jakarta Sans'),Arial,Helvetica,sans-serif;display:flex;align-items:baseline;gap:12px;padding:22px 0 12px;border-bottom:2px solid #a8cfbd}.ds-amount:focus-within{border-color:var(--green,#008563)}.ds-amount>span{font-size:32px;font-weight:700;color:var(--green,#008563)}.ds-amount input{font-family:var(--font-jakarta,'Plus Jakarta Sans'),Arial,Helvetica,sans-serif;min-width:0;width:100%;border:0;background:transparent;color:var(--foreground,#1d2230);caret-color:var(--green,#008563);font-size:clamp(48px,5vw,68px);font-weight:750;font-variant-numeric:tabular-nums;letter-spacing:-.035em;padding:4px;border-radius:5px}.ds-amount input::placeholder{color:#68786c;opacity:1}.ds-amount input:focus-visible{outline:2px solid var(--green,#008563);outline-offset:4px}.ds-amount input.ds-long-amount{font-size:clamp(24px,2.8vw,36px);letter-spacing:-.025em}.ds-amount.ds-error{border-color:#b73925}@media(max-width:760px){.ds-amount{padding-top:18px}.ds-amount input{font-size:58px}.ds-amount input.ds-long-amount{font-size:clamp(22px,7vw,28px)}}"
+    },
+    {
+      "name": "Confirmación del saldo",
+      "kind": "custom",
+      "description": "Estado verde de bienvenida con monto persistido; el componente real gestiona el foco una vez.",
+      "html": "<div class=\"ds-success\" tabindex=\"-1\" role=\"status\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg><span>Tu saldo inicial está listo: <strong>S/ 1,250.50</strong>.</span></div>",
+      "css": ".ds-success{font-family:var(--font-jakarta,'Plus Jakarta Sans'),Arial,Helvetica,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 20px;background:var(--green-light,#ecfaf3);color:#176047;font-size:14px;animation:ds-ready .22s cubic-bezier(.16,1,.3,1)}.ds-success svg{flex-shrink:0}.ds-success:focus-visible{outline:2px solid var(--green,#008563);outline-offset:-4px}@keyframes ds-ready{from{filter:blur(2px);transform:translateY(4px)}to{filter:blur(0);transform:translateY(0)}}@media(prefers-reduced-motion:reduce){.ds-success{animation:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Tu billetera personal",
+    "overview": "Wally presenta las finanzas cotidianas sobre un fondo crema, con superficies blancas y cifras protagonistas. La referencia verbal proviene de la interfaz existente; describe el sistema conservado y no introduce una nueva identidad de marca. Plus Jakarta Sans aporta continuidad entre la marca, los importes y las instrucciones en español.\n\nLa densidad cambia con la tarea: los resúmenes reúnen cifras en tarjetas y los formularios reservan espacio al importe. El color distingue acciones, ingresos y gastos; los bordes suaves separan áreas sin competir con el contenido. Este registro describe el código conservado en `app/globals.css`, `app/workspace.css` y los componentes muestreados. La composición y los estados particulares de la bienvenida se documentan en `.impeccable/surfaces/components-wally-onboarding-tsx.md`.",
+    "keyCharacteristics": [
+      "Fondo crema y superficies blancas con bordes cálidos.",
+      "Una sola familia tipográfica, pesos fuertes para cifras y títulos.",
+      "Verde de ingresos y confirmación; coral en la marca, acciones y gastos existentes.",
+      "Controles redondeados, espaciado explícito y adaptación por superficie."
+    ],
+    "rules": [
+      {
+        "name": "The Semantic Color Rule",
+        "body": "El verde conserva el significado de ingreso o confirmación; el contexto de gasto conserva su familia coral. La restricción de coral a la marca en la bienvenida no cambia los usos existentes del resto de la aplicación.",
+        "section": "colors"
+      },
+      {
+        "name": "The Complete Amount Rule",
+        "body": "Las cifras monetarias usan números tabulares y variantes para importes largos; la cifra completa y el prefijo de moneda deben seguir siendo legibles juntos.",
+        "section": "typography"
+      },
+      {
+        "name": "The Reduced Motion Rule",
+        "body": "Las transiciones de estado conservan una alternativa sin movimiento; la confirmación de bienvenida desactiva su animación con `prefers-reduced-motion`.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do conservar la familia Plus Jakarta Sans y las cifras tabulares en importes.",
+      "Do mantener el significado contextual del verde y del coral.",
+      "Do comprobar el importe completo y el foco visible en los anchos móviles admitidos.",
+      "Do acompañar errores y confirmaciones con texto en español.",
+      "Do mantener los ajustes de composición particulares en la ficha de cada superficie."
+    ],
+    "donts": [
+      "Don't convertir la composición de bienvenida en una plantilla global de la aplicación.",
+      "Don't extender los kickers decorativos ni los iconos de glifos heredados como reglas para nuevas superficies.",
+      "Don't suprimir la alternativa de movimiento reducido de las confirmaciones."
+    ]
+  }
+}

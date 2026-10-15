@@ -3,17 +3,18 @@
 import { useDeferredValue, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import {
-  displayDate, formatMoney, fullDate, monthLabel, paymentMethods, type Transaction,
+  displayDate, formatMoney, fullDate, INITIAL_BALANCE_CATEGORY, monthLabel, paymentMethods, type Transaction,
 } from "@/lib/finance";
 import { filterTransactions } from "@/lib/insights";
 import { Icon } from "./icon";
 import { TransactionForm } from "./transaction-form";
+import { InitialBalanceEdit } from "./initial-balance-edit";
 import { useCategories, useUi } from "./wally-provider";
 
 export function TransactionRow({ transaction, onClick }: { transaction: Transaction; onClick: () => void }) {
   const categories = useCategories();
   const category = categories.find(item => item.id === transaction.category)!;
-  const payment = paymentMethods.find(item => item.id === transaction.paymentMethod)!;
+  const payment = paymentMethods.find(item => item.id === transaction.paymentMethod);
   const income = transaction.type === "income";
   const title = transaction.description || category.label;
   const isCoffee = transaction.category === "food" && /café|cafetería/i.test(transaction.description);
@@ -23,7 +24,7 @@ export function TransactionRow({ transaction, onClick }: { transaction: Transact
     <span className={`transaction-icon tone-${category.tone}`} aria-hidden="true">{isCoffee ? "☕" : category.emoji}</span>
     <span className="transaction-info"><span className="transaction-title">{title}</span>
       <span className="transaction-meta"><span>{category.label}</span><i>·</i><span>{displayDate(transaction.date)}</span>
-        <i className="payment-meta">·</i><span className="payment-meta">{payment.fullLabel}</span>
+        {payment && <><i className="payment-meta">·</i><span className="payment-meta">{payment.fullLabel}</span></>}
       </span>
     </span>
     <span className="transaction-amount">
@@ -135,7 +136,7 @@ export function TransactionDetail({ transaction, onDelete, onSave }: {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const category = categories.find(item => item.id === transaction.category)!;
-  const payment = paymentMethods.find(item => item.id === transaction.paymentMethod)!;
+  const payment = paymentMethods.find(item => item.id === transaction.paymentMethod);
   const income = transaction.type === "income";
   async function remove() {
     setBusy(true);
@@ -144,7 +145,9 @@ export function TransactionDetail({ transaction, onDelete, onSave }: {
     catch (cause) { setError(cause instanceof Error ? cause.message : "No pudimos eliminar el movimiento."); }
     finally { setBusy(false); }
   }
-  if (editing) return <TransactionForm ready initial={transaction} onSave={onSave} onCancel={() => setEditing(false)} />;
+  if (editing) return transaction.category === INITIAL_BALANCE_CATEGORY
+    ? <InitialBalanceEdit initial={transaction} onSave={onSave} onCancel={() => setEditing(false)} />
+    : <TransactionForm ready initial={transaction} onSave={onSave} onCancel={() => setEditing(false)} />;
   return <>
     <div className="detail-summary">
       <span className={`transaction-icon tone-${category.tone}`}>{category.emoji}</span>
@@ -154,7 +157,7 @@ export function TransactionDetail({ transaction, onDelete, onSave }: {
     <dl className="detail-facts">
       <div><dt>Tipo</dt><dd>{income ? "Ingreso" : "Gasto"}</dd></div>
       <div><dt>Categoría</dt><dd>{category.label}</dd></div>
-      <div><dt>Método</dt><dd>{payment.fullLabel}</dd></div>
+      {payment && <div><dt>Método</dt><dd>{payment.fullLabel}</dd></div>}
       <div><dt>Fecha</dt><dd>{fullDate(transaction.date)}</dd></div>
       <div><dt>Moneda</dt><dd>Soles (PEN)</dd></div>
     </dl>

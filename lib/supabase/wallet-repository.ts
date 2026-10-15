@@ -11,7 +11,7 @@ export const cloudWalletSchema = z.object({
 export type CloudWallet = z.infer<typeof cloudWalletSchema>;
 const rowSchema = z.object({
   id: z.uuid(), type: z.enum(["income", "expense"]), amount_cents: z.number().int(),
-  description: z.string(), category_id: z.string(), payment_method_id: z.string(),
+  description: z.string(), category_id: z.string(), payment_method_id: z.string().nullable(),
   occurred_on: z.string(), created_at: z.string(), version: z.number().int().positive(),
 });
 function transactionFromRow(value: unknown): Transaction {
@@ -21,7 +21,7 @@ function transactionFromRow(value: unknown): Transaction {
     date: row.occurred_on, createdAt: row.created_at, version: row.version });
 }
 export function databaseError(error: { code?: string; message: string }): Error {
-  if (["PGRST202", "PGRST205", "42P01"].includes(error.code ?? "")) return new Error("Falta aplicar la migración de Wally en Supabase.");
+  if (["PGRST202", "PGRST204", "PGRST205", "42P01", "42703"].includes(error.code ?? "")) return new Error("Falta aplicar la migración de Wally en Supabase.");
   if (error.code === "23505") return new Error("Este registro ya existe. Actualiza la billetera antes de continuar.");
   if (error.code === "23503") return new Error("La categoría no pertenece a esta billetera o a este tipo de movimiento.");
   if (error.code === "42501") return new Error("No tienes acceso a esta operación. Revisa tu sesión y los permisos de la billetera.");

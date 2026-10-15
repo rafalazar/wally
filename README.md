@@ -38,20 +38,25 @@ node scripts/check-supabase.mjs
 
 Los tests usan PostgreSQL en memoria mediante PGlite y no escriben en tu proyecto
 remoto. Comprueban permisos entre usuarios, invitaciones, relaciones, concurrencia,
-validación monetaria, categorías, exportación y billeteras nuevas vacías. El último
+validación monetaria, categorías, exportación y bienvenida con saldo inicial. El último
 comando verifica la conexión real, el proveedor Google y el bloqueo de acceso
 anónimo; requiere conexión a internet y no imprime claves.
 
 Las pruebas de interfaz usan un repositorio en memoria: comprueban registros
-consecutivos, entrada de montos y notas opcionales sin escribir en Supabase.
+consecutivos, entrada de montos, notas opcionales y bienvenida obligatoria sin
+escribir en Supabase. El flujo de Google real requiere una cuenta nueva de prueba.
 
 ## Modelo de datos
 
 `profiles`, `wallets`, `wallet_members`, `categories`, `transactions`,
 `wallet_invitations`, `currencies` y `payment_methods`, además de `auth.users`.
 
-- Cada usuario recibe una billetera personal vacía, con saldo cero y doce
-  categorías iniciales para registrar sus propios movimientos.
+- Las cuentas nuevas tras la migración de bienvenida registran un saldo inicial
+  positivo antes de acceder a la billetera personal. Las cuentas anteriores no
+  reciben la bienvenida. La finalización se conserva entre sesiones y dispositivos.
+- El saldo inicial es un ingreso real, con su categoría reservada y sin método de
+  pago. Se puede corregir, eliminar y deshacer sin repetir la bienvenida. Los
+  reintentos de creación no duplican el ingreso. Las compartidas empiezan vacías.
 - El propietario crea billeteras compartidas y gestiona sus miembros.
 - Todos los miembros pueden ver, registrar, editar y eliminar sus movimientos.
 - Los códigos de invitación son de un solo uso, vencen a los siete días y se
@@ -70,7 +75,7 @@ consecutivos, entrada de montos y notas opcionales sin escribir en Supabase.
 
 ## Organización
 
-- `supabase/migrations/`: SQL versionado, alineado con el historial remoto.
+- `supabase/migrations/`: SQL versionado; comprobar las pendientes con la CLI antes de desplegar.
 - `lib/supabase/`: clientes SSR/navegador, tipos generados y repositorio remoto.
 - `proxy.ts`: renovación y validación de sesión, con respuestas sin caché compartida.
 - `components/wally/`: autenticación, billeteras, formularios, historial y resumen.

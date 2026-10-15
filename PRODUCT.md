@@ -44,8 +44,14 @@ scope. A unique competitive claim has not been established.
 
 ## Capabilities and Constraints
 
-- Personal wallets are private. New accounts start with an empty personal wallet,
-  zero balance, and initial categories; shared wallets remain separate.
+- Personal wallets are private. Accounts created after the onboarding migration
+  must register one positive initial PEN balance after Google sign-in. Existing
+  accounts bypass this welcome. Shared wallets remain separate and start empty.
+- Onboarding is a dedicated single-step screen, with no skip or zero option.
+  Its completion is stored in Supabase across sessions and devices. The initial
+  balance is a real income in the reserved Saldo inicial category, with no payment
+  method; it contributes to balance and the month's income. Users can correct its
+  amount, note and date, or delete/undo it, without reopening the welcome.
 - Transactions and custom categories belong to a wallet. Each wallet has one
   currency, and the current implementation supports PEN only.
 - Amounts are stored as integer cents. Balances are calculated from transactions.

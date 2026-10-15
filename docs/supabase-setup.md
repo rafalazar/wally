@@ -14,7 +14,7 @@
 ## Decisiones de esta versión
 
 Soles (PEN), billeteras privadas y compartidas, doce categorías iniciales más
-categorías personalizadas. Todos los miembros de una billetera compartida pueden
+categorías personalizadas y una categoría reservada para el saldo inicial. Todos los miembros de una billetera compartida pueden
 editar todos sus movimientos; solo el propietario gestiona el acceso. Crédito es
 un método de registro, sin gestión de deuda o cuotas. Presupuestos, metas,
 recurrencias y cuentas bancarias no forman parte de esta integración.
@@ -39,8 +39,9 @@ no se cambiará la moneda de registros existentes ni se sumarán monedas distint
 
 Los saldos y resúmenes se calculan desde los movimientos. No se almacenan totales
 independientes que puedan quedar desactualizados. El perfil y las categorías se
-crean automáticamente al registrar una identidad. Las billeteras remotas nuevas
-empiezan sin movimientos de ejemplo.
+crean automáticamente al registrar una identidad. Tras aplicar la migración de
+bienvenida, las cuentas nuevas completan un saldo inicial positivo antes de usar
+su billetera personal. No se crean movimientos de ejemplo.
 
 ## Configurar Google OAuth en otro entorno
 
@@ -62,7 +63,9 @@ empiezan sin movimientos de ejemplo.
    `http://localhost:3000/auth/callback`.
 6. Ejecuta `node scripts/check-supabase.mjs` y confirma `googleEnabled: true`.
    Entra en Wally, pulsa Continuar con Google y comprueba que aparece tu billetera
-   personal vacía. Cierra sesión y vuelve a entrar para verificar persistencia.
+   personal. Una cuenta creada tras la migración de bienvenida debe registrar su
+   saldo inicial; una cuenta anterior accede directamente. Cierra sesión y vuelve
+   a entrar para verificar que no se repite la bienvenida.
 
 Son dos callbacks distintos: **Google vuelve a Supabase** y **Supabase vuelve a
 Wally**. La aplicación intercambia el código usando PKCE y cookies, valida la
@@ -74,6 +77,54 @@ Configura las dos variables publicables en el alojamiento antes de construir y
 desplegar. No uses comodines amplios para las redirecciones de producción.
 
 ## Verificación y límites
+
+### Bienvenida con saldo inicial
+
+Migración nueva: `supabase/migrations/20261015010000_initial_balance_onboarding.sql`.
+Se entrega para que el propietario la ejecute; no se ha confirmado su aplicación
+remota. El corte entre cuentas existentes y nuevas ocurre al aplicar esta migración.
+Las cuentas existentes quedan completadas sin crear movimientos, aunque estén vacías.
+
+Desde PowerShell, en la raíz de Wally, con la CLI autenticada y el proyecto vinculado:
+
+```powershell
+npx supabase db push --dry-run
+npx supabase db push
+npx supabase migration list
+```
+
+Revisa el ensayo antes de ejecutar el segundo comando. Debe incluir la migración
+`20261015010000`; si la anterior de notas opcionales sigue pendiente, también debe
+aplicarse antes. La migración inicial `20260916023352` ya está documentada como
+aplicada: si aparece pendiente, revisa el historial antes de continuar.
+
+Para la primera conexión de la CLI:
+
+```powershell
+if (-not (Test-Path "supabase/config.toml")) { npx supabase init }
+npx supabase login
+npx supabase link --project-ref zuzecdskahfsoiodgvrx
+```
+
+Aplica primero la migración y despliega el cliente actualizado inmediatamente
+después. En ese intervalo, el cliente antiguo no puede registrar movimientos en
+las billeteras personales nuevas pendientes. Recarga las sesiones abiertas: el
+cliente anterior no admite el método nulo de los saldos iniciales. No reviertas
+al cliente anterior una vez existan estos registros; conserva la compatibilidad
+con método nulo al hacer una corrección.
+
+La RPC `complete_onboarding(p_amount_cents)` obtiene la identidad desde `auth.uid()`,
+bloquea el perfil y guarda categoría, ingreso y finalización en una sola transacción.
+Los reintentos devuelven el mismo resultado. Solo opera sobre la billetera personal;
+la categoría `opening_balance` y el método nulo quedan reservados a ese ingreso.
+El identificador y un contador de versión sobreviven a su eliminación, evitando
+duplicados y ediciones antiguas tras deshacer. Los permisos del perfil siguen
+limitando la escritura directa al nombre visible.
+
+Verificación manual después del despliegue: cuenta nueva de Google, monto positivo,
+saldo e ingreso del mes correctos, una sola fila Saldo inicial y sin método; luego
+recarga, nueva sesión, edición, eliminación/deshacer y CSV. Una cuenta existente
+(incluso vacía) debe acceder directamente; una compartida debe conservar su flujo.
 
 ### Migración de notas opcionales
 
@@ -94,7 +145,7 @@ no restaures la restricción antigua ni rellenes notas de usuarios automáticame
 `npm test` ejecuta las migraciones en PostgreSQL en memoria, con usuarios
 independientes y roles `anon` y `authenticated`. Prueba aislamiento, relación entre
 billetera/categoría/tipo, invitaciones y retirada de miembros, conflictos de
-edición, validación monetaria y creación de billeteras vacías con saldo cero.
+edición, validación monetaria, bienvenida atómica y cuentas existentes sin cambios.
 
 La revisión remota de seguridad señala cuatro RPC `SECURITY DEFINER` ejecutables
 por usuarios autenticados: creación de billeteras, creación/aceptación de

@@ -93,16 +93,25 @@ export type Database = {
           created_at: string
           display_name: string
           id: string
+          onboarding_completed_at: string | null
+          initial_transaction_id: string | null
+          initial_transaction_version: number
         }
         Insert: {
           created_at?: string
           display_name?: string
           id: string
+          onboarding_completed_at?: string | null
+          initial_transaction_id?: string | null
+          initial_transaction_version?: number
         }
         Update: {
           created_at?: string
           display_name?: string
           id?: string
+          onboarding_completed_at?: string | null
+          initial_transaction_id?: string | null
+          initial_transaction_version?: number
         }
         Relationships: []
       }
@@ -115,7 +124,7 @@ export type Database = {
           description: string
           id: string
           occurred_on: string
-          payment_method_id: string
+          payment_method_id: string | null
           type: string
           updated_at: string
           version: number
@@ -129,7 +138,7 @@ export type Database = {
           description: string
           id?: string
           occurred_on: string
-          payment_method_id: string
+          payment_method_id?: string | null
           type: string
           updated_at?: string
           version?: number
@@ -143,7 +152,7 @@ export type Database = {
           description?: string
           id?: string
           occurred_on?: string
-          payment_method_id?: string
+          payment_method_id?: string | null
           type?: string
           updated_at?: string
           version?: number
@@ -302,6 +311,7 @@ export type Database = {
         Returns: string
       }
       get_wallet: { Args: { p_wallet_id: string }; Returns: Json }
+      complete_onboarding: { Args: { p_amount_cents: number }; Returns: Json }
       list_wallet_members: {
         Args: { p_wallet_id: string }
         Returns: {

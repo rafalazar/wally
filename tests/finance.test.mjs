@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { categories, walletSchema, transactionFormSchema, isAmountDraft, isValidDate, localDate, parseAmount, recentFirst, summarize, transactionsToCsv } from '../lib/finance.ts';
+import { categories, initialBalanceCategory, restoredTransaction, transactionSchema, walletSchema, transactionFormSchema, isAmountDraft, isValidDate, localDate, parseAmount, recentFirst, summarize, transactionsToCsv } from '../lib/finance.ts';
 import { buildMonthlyInsights, defaultFilters, filterTransactions } from '../lib/insights.ts';
 
 const movement = (overrides = {}) => ({ id: 'test-1', type: 'expense', amountCents: 850, description: 'Café', category: 'food', paymentMethod: 'debit', date: '2026-09-14', createdAt: '2026-09-14T15:00:00.000Z', ...overrides });
@@ -41,7 +41,7 @@ test('notes are optional for expenses and income without changing search or CSV 
     for (const description of ['', '   ']) {
       const form = transactionFormSchema.parse({ type, amount: '8,50', description, category, paymentMethod: 'cash', date: '2026-01-01' });
       assert.equal(form.description, '');
-      const item = walletSchema.parse({ version: 1, transactions: [movement({ type, category, description })] }).transactions[0];
+      const item = walletSchema.parse({ version: 1, transactions: [movement({ type, category, description, paymentMethod: 'cash' })] }).transactions[0];
       assert.equal(item.description, '');
       assert.equal(filterTransactions([item], { ...defaultFilters, search: type === 'income' ? 'sueldo' : 'alimentacion' }).length, 1);
       assert.ok(transactionsToCsv([item]).includes(`"${type === 'income' ? 'Ingreso' : 'Gasto'}","","`));
@@ -84,4 +84,21 @@ test("new movements sort before earlier records across midnight", () => {
   const previous = movement({ createdAt: "2026-09-14T23:59:59.000Z" });
   const fresh = movement({ id: "after-midnight", date: "2026-09-15", createdAt: "2026-09-15T00:00:01.000Z" });
   assert.equal(recentFirst([previous, fresh])[0].id, "after-midnight");
+});
+
+test('initial balances retain income semantics, no method, category search, CSV and undo identity', () => {
+  const item = movement({ type: 'income', category: 'opening_balance', description: 'Saldo inicial', paymentMethod: null, amountCents: 10000 });
+  const catalog = [...categories, initialBalanceCategory];
+  assert.doesNotThrow(() => walletSchema.parse({ version: 1, transactions: [item], categories: catalog }));
+  assert.equal(summarize([item], '2026-09-14').balance, 10000);
+  assert.equal(buildMonthlyInsights([item], '2026-09', '2026-09-14', catalog).income, 10000);
+  assert.equal(filterTransactions([item], { ...defaultFilters, search: 'saldo inicial' }, catalog).length, 1);
+  assert.ok(transactionsToCsv([item], catalog).includes('"Saldo inicial","","100.00","PEN"'));
+  assert.equal(restoredTransaction(item).id, item.id);
+  assert.notEqual(restoredTransaction(movement()).id, 'test-1');
+  for (const override of [{ type: 'expense' }, { category: 'salary' }, { paymentMethod: 'cash' }]) {
+    assert.equal(transactionSchema.safeParse({ ...item, ...override }).success, false);
+  }
+  assert.equal(transactionSchema.safeParse(movement({ paymentMethod: null })).success, false);
+  assert.equal(transactionFormSchema.safeParse({ type: 'income', amount: '100', description: '', category: 'opening_balance', paymentMethod: 'cash', date: '2026-01-01' }).success, false);
 });

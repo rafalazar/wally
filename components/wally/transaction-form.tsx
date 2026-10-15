@@ -6,11 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { subDays } from "date-fns";
 import {
-  isAmountDraft, localDate, MAX_AMOUNT_CENTS, parseAmount, paymentMethods,
+  INITIAL_BALANCE_CATEGORY, localDate, MAX_AMOUNT_CENTS, parseAmount, paymentMethods,
   createTransactionFormSchema, type Transaction, type TransactionFormValues, type TransactionType,
 } from "@/lib/finance";
 import { useCategories, useUi, useWallet } from "./wally-provider";
 import { Icon } from "./icon";
+import { AmountInput } from "./amount-input";
 
 type Props = {
   ready: boolean;
@@ -18,12 +19,6 @@ type Props = {
   onSave: (transaction: Transaction) => Promise<void>;
   onCancel?: () => void;
 };
-
-function acceptsAmountInsertion(input: HTMLInputElement, text: string) {
-  const start = input.selectionStart ?? input.value.length;
-  const end = input.selectionEnd ?? start;
-  return isAmountDraft(input.value.slice(0, start) + text + input.value.slice(end));
-}
 
 export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
   const categories = useCategories();
@@ -38,8 +33,8 @@ export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
   const [addingCategory, setAddingCategory] = useState(false);
   const [categoryBusy, setCategoryBusy] = useState(false);
   const [categoryError, setCategoryError] = useState("");
-  const choiceFor = (type: TransactionType) => categories.find(c => c.id === preferences[type].category && c.type === type)?.id
-    ?? categories.find(c => c.type === type)!.id;
+  const choiceFor = (type: TransactionType) => categories.find(c => c.id !== INITIAL_BALANCE_CATEGORY && c.id === preferences[type].category && c.type === type)?.id
+    ?? categories.find(c => c.id !== INITIAL_BALANCE_CATEGORY && c.type === type)!.id;
   const {
     register, control, handleSubmit, setValue, setFocus, reset, clearErrors, setError,
     formState: { errors, isSubmitting },
@@ -108,7 +103,6 @@ export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
 
   return <section className={initial ? "edit-record" : "quick-record"} aria-labelledby={initial ? undefined : `${id}-title`}>
     {!initial && <div className="section-heading centered">
-      <span className="section-kicker"><span />UN PEQUEÑO HÁBITO, UNA GRAN DIFERENCIA</span>
       <h1 id={`${id}-title`}>Tus cuentas, al día.</h1>
       <p>Registra un movimiento y sigue con lo que importa.</p>
     </div>}
@@ -130,29 +124,10 @@ export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
           <label className="amount-label" htmlFor={`${id}-amount`}>Monto de la operación <span className="currency-badge">PEN</span></label>
           <div className={`amount-entry ${errors.amount ? "has-error" : ""}`}>
             <span className="currency-symbol" aria-hidden="true">S/</span>
-            <input {...amountField} id={`${id}-amount`} data-amount type="text" inputMode="decimal"
+            <AmountInput {...amountField} onValueChange={amountField.onChange} id={`${id}-amount`} data-amount
               autoComplete="off" placeholder="0.00" maxLength={12} aria-label="Monto en soles"
               aria-invalid={!!errors.amount} aria-describedby={errors.amount ? `${id}-amount-error` : undefined}
-              className={amount.length > 7 ? "long-amount" : ""}
-              onBeforeInput={event => {
-                const text = (event.nativeEvent as InputEvent).data;
-                if (text && !acceptsAmountInsertion(event.currentTarget, text)) event.preventDefault();
-              }}
-              onPaste={event => {
-                if (!acceptsAmountInsertion(event.currentTarget, event.clipboardData.getData("text"))) event.preventDefault();
-              }}
-              onDrop={event => {
-                if (!acceptsAmountInsertion(event.currentTarget, event.dataTransfer.getData("text"))) event.preventDefault();
-              }}
-              onChange={event => {
-                if (isAmountDraft(event.target.value)) amountField.onChange(event.target.value);
-                else event.target.value = amountField.value;
-              }}
-              onBlur={event => {
-                amountField.onBlur();
-                const cents = parseAmount(event.target.value);
-                if (cents) setValue("amount", (cents / 100).toFixed(2));
-              }} />
+              className={amount.length > 7 ? "long-amount" : ""} />
           </div>
           <div className="quick-amounts"><span>Sumar:</span>
             {[10, 50, 100, 500].map(value => <motion.button whileTap={{ scale: 0.94 }} key={value}
@@ -178,7 +153,7 @@ export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
             <AnimatePresence mode="wait" initial={false}>
               <motion.div key={type} className="category-options" initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}>
-                {categories.filter(item => item.type === type).map(item => <label key={item.id}
+                {categories.filter(item => item.type === type && item.id !== INITIAL_BALANCE_CATEGORY).map(item => <label key={item.id}
                   className={`category-chip ${values.category === item.id ? "selected" : ""}`}>
                   <input type="radio" {...register("category")} value={item.id} />
                   <span aria-hidden="true">{item.emoji}</span>{item.label}
