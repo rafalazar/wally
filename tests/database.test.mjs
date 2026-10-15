@@ -67,9 +67,26 @@ test('PostgreSQL migrations, isolation, sharing and financial integrity', async 
     await rpc(alice, aliceWallet, 'add', movement({ category: 'pets' }));
   });
   await t.test('database rejects invalid money, dates and income methods', async () => {
-    for (const overrides of [{ amountCents: -1 }, { amountCents: 100000000000 }, { type: 'income', category: 'salary', paymentMethod: 'credit' }, { description: ' ' }, { date: '2099-01-01' }]) {
+    for (const overrides of [{ amountCents: -1 }, { amountCents: 100000000000 }, { type: 'income', category: 'salary', paymentMethod: 'credit' }, { description: null }, { description: 'x'.repeat(161) }, { date: '2099-01-01' }]) {
       await assert.rejects(rpc(alice, aliceWallet, 'add', movement(overrides)));
     }
+  });
+  await t.test('optional notes round-trip through add, edit, read, and restore', async () => {
+    for (const type of ['expense', 'income']) {
+      const item = movement({ type, category: type === 'income' ? 'salary' : 'food', description: '   ' });
+      const created = await rpc(alice, aliceWallet, 'add', item);
+      assert.equal(created.transaction.description, '');
+      const annotated = await rpc(alice, aliceWallet, 'update', { ...item, description: '  Nota  ' }, created.transaction.version);
+      assert.equal(annotated.transaction.description, 'Nota');
+      const cleared = await rpc(alice, aliceWallet, 'update', { ...item, description: '' }, annotated.transaction.version);
+      assert.equal(cleared.transaction.description, '');
+      const snapshot = (await asUser(alice, tx => tx.query('select public.get_wallet($1) as data', [aliceWallet]))).rows[0].data;
+      assert.equal(snapshot.transactions.find(t => t.id === item.id).description, '');
+      await rpc(alice, aliceWallet, 'remove', item, cleared.transaction.version);
+      const restored = await rpc(alice, aliceWallet, 'restore', { ...item, description: '' });
+      assert.equal(restored.transaction.description, '');
+    }
+    await rpc(alice, aliceWallet, 'add', movement({ description: 'x'.repeat(160) }));
   });
   let shared, token;
   await t.test('owner creates shared wallet and issues single-use invitation', async () => {

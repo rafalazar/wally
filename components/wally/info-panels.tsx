@@ -7,7 +7,7 @@ export function HelpPanel() {
     <p className="modal-intro">Llevar tus cuentas puede ser así de sencillo.</p>
     <ol className="help-steps">
       <li><span>1</span><div><h3>Elige ingreso o gasto</h3><p>Escribe el monto en soles. Usa los botones para sumar o ingresa un importe con punto o coma decimal.</p></div></li>
-      <li><span>2</span><div><h3>Dale un poco de contexto</h3><p>Añade un detalle, la categoría, el método y la fecha. Wally recuerda las opciones de tu último registro.</p></div></li>
+      <li><span>2</span><div><h3>Dale un poco de contexto</h3><p>Elige la categoría, el método y la fecha. Si quieres, añade una nota en el detalle. Wally recuerda las opciones de tu último registro.</p></div></li>
       <li><span>3</span><div><h3>Registra y sigue con tu día</h3><p>Tu saldo se actualiza al guardar. Puedes deshacer desde la confirmación y editar o eliminar un movimiento desde su detalle.</p></div></li>
     </ol>
     <div className="info-box"><Icon name="chart" size={19} /><p>En Movimientos puedes buscar, filtrar y exportar a CSV. En Resumen encontrarás tus gráficas por mes.</p></div>

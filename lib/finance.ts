@@ -43,6 +43,11 @@ export function isValidDate(value: string): boolean {
   return isValid(date) && localDate(date) === value;
 }
 
+/** Allow an empty amount or an unfinished decimal while the user is typing. */
+export function isAmountDraft(value: string): boolean {
+  return value === "" || /^\d{1,9}(?:[.,]\d{0,2})?$/.test(value);
+}
+
 /** Keep monetary arithmetic in integer cents, never floating-point currency. */
 export function parseAmount(value: string): number | null {
   const normalized = value.trim().replace(",", ".");
@@ -83,7 +88,7 @@ export type Category = z.infer<typeof categoryDefinitionSchema>;
 export const paymentSchema = z.enum(paymentMethods.map(item => item.id));
 const typeSchema = z.enum(["expense", "income"]);
 const dateSchema = z.string().refine(isValidDate, "Elige una fecha válida.");
-const descriptionSchema = z.string().trim().min(1, "Añade un detalle para recordar este movimiento.").max(160, "Usa hasta 160 caracteres.");
+const descriptionSchema = z.string().trim().max(160, "Usa hasta 160 caracteres.");
 
 export const transactionSchema = z.object({
   id: z.string().min(1),

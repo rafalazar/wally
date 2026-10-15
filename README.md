@@ -30,6 +30,7 @@ Consulta [la guía de Supabase y Google](docs/supabase-setup.md).
 
 ```sh
 npm test
+npm run test:ui
 npm run lint
 npm run build
 node scripts/check-supabase.mjs
@@ -40,6 +41,9 @@ remoto. Comprueban permisos entre usuarios, invitaciones, relaciones, concurrenc
 validación monetaria, categorías, exportación y billeteras nuevas vacías. El último
 comando verifica la conexión real, el proveedor Google y el bloqueo de acceso
 anónimo; requiere conexión a internet y no imprime claves.
+
+Las pruebas de interfaz usan un repositorio en memoria: comprueban registros
+consecutivos, entrada de montos y notas opcionales sin escribir en Supabase.
 
 ## Modelo de datos
 
@@ -54,6 +58,8 @@ anónimo; requiere conexión a internet y no imprime claves.
   guardan como hashes. No se envían correos automáticamente.
 - Los importes se almacenan como céntimos enteros; los saldos se calculan desde
   los movimientos. Cada billetera tiene una moneda. La versión actual admite PEN.
+- El detalle es una nota opcional de hasta 160 caracteres. Sin nota, el historial
+  muestra la categoría y el CSV conserva el detalle vacío.
 - Débito, crédito, efectivo y transferencia son métodos de registro. No se
   administran cuentas bancarias, deuda, cuotas ni ciclos de tarjeta.
 - Las relaciones incluyen la billetera y el tipo de categoría; RLS protege todas

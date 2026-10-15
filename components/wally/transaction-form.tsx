@@ -1,12 +1,12 @@
 "use client";
 
 import { useId, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useController, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { subDays } from "date-fns";
 import {
-  localDate, MAX_AMOUNT_CENTS, parseAmount, paymentMethods,
+  isAmountDraft, localDate, MAX_AMOUNT_CENTS, parseAmount, paymentMethods,
   createTransactionFormSchema, type Transaction, type TransactionFormValues, type TransactionType,
 } from "@/lib/finance";
 import { useCategories, useUi, useWallet } from "./wally-provider";
@@ -18,6 +18,12 @@ type Props = {
   onSave: (transaction: Transaction) => Promise<void>;
   onCancel?: () => void;
 };
+
+function acceptsAmountInsertion(input: HTMLInputElement, text: string) {
+  const start = input.selectionStart ?? input.value.length;
+  const end = input.selectionEnd ?? start;
+  return isAmountDraft(input.value.slice(0, start) + text + input.value.slice(end));
+}
 
 export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
   const categories = useCategories();
@@ -53,7 +59,7 @@ export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
   const type = values.type ?? "expense";
   const isIncome = type === "income";
   const amount = values.amount ?? "";
-  const amountField = register("amount");
+  const { field: amountField } = useController({ name: "amount", control });
 
   function changeType(next: TransactionType) {
     setValue("type", next);
@@ -90,7 +96,8 @@ export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
       remember(data.type, { category: data.category, paymentMethod: data.paymentMethod });
       if (!initial) {
         setDraftId(crypto.randomUUID());
-        reset({ ...data, amount: "", description: "", date: localDate() });
+        // Retain radio refs so their initial defaultChecked cannot replace the saved type.
+        reset({ ...data, amount: "", description: "", date: localDate() }, { keepFieldsRef: true });
         setSaved(true);
         requestAnimationFrame(() => setFocus("amount"));
       }
@@ -127,8 +134,22 @@ export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
               autoComplete="off" placeholder="0.00" maxLength={12} aria-label="Monto en soles"
               aria-invalid={!!errors.amount} aria-describedby={errors.amount ? `${id}-amount-error` : undefined}
               className={amount.length > 7 ? "long-amount" : ""}
+              onBeforeInput={event => {
+                const text = (event.nativeEvent as InputEvent).data;
+                if (text && !acceptsAmountInsertion(event.currentTarget, text)) event.preventDefault();
+              }}
+              onPaste={event => {
+                if (!acceptsAmountInsertion(event.currentTarget, event.clipboardData.getData("text"))) event.preventDefault();
+              }}
+              onDrop={event => {
+                if (!acceptsAmountInsertion(event.currentTarget, event.dataTransfer.getData("text"))) event.preventDefault();
+              }}
+              onChange={event => {
+                if (isAmountDraft(event.target.value)) amountField.onChange(event.target.value);
+                else event.target.value = amountField.value;
+              }}
               onBlur={event => {
-                void amountField.onBlur(event);
+                amountField.onBlur();
                 const cents = parseAmount(event.target.value);
                 if (cents) setValue("amount", (cents / 100).toFixed(2));
               }} />
@@ -142,7 +163,7 @@ export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
 
         <div className="form-fields">
           <div className="field">
-            <label htmlFor={`${id}-description`} className="detail-label">Detalle del {isIncome ? "ingreso" : "gasto"}</label>
+            <label htmlFor={`${id}-description`} className="detail-label">Detalle del {isIncome ? "ingreso" : "gasto"} (opcional)</label>
             <div className={`input-with-icon ${errors.description ? "has-error" : ""}`}>
               <Icon name="edit" size={17} />
               <input {...register("description")} id={`${id}-description`} type="text" maxLength={160}

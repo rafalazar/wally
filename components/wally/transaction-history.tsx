@@ -15,12 +15,13 @@ export function TransactionRow({ transaction, onClick }: { transaction: Transact
   const category = categories.find(item => item.id === transaction.category)!;
   const payment = paymentMethods.find(item => item.id === transaction.paymentMethod)!;
   const income = transaction.type === "income";
+  const title = transaction.description || category.label;
   const isCoffee = transaction.category === "food" && /café|cafetería/i.test(transaction.description);
   return <motion.button className="transaction-row" type="button" onClick={onClick}
     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-    aria-label={`Ver detalle: ${transaction.description}, ${income ? "ingreso" : "gasto"} de ${formatMoney(transaction.amountCents)}`}>
+    aria-label={`Ver detalle: ${title}, ${income ? "ingreso" : "gasto"} de ${formatMoney(transaction.amountCents)}`}>
     <span className={`transaction-icon tone-${category.tone}`} aria-hidden="true">{isCoffee ? "☕" : category.emoji}</span>
-    <span className="transaction-info"><span className="transaction-title">{transaction.description}</span>
+    <span className="transaction-info"><span className="transaction-title">{title}</span>
       <span className="transaction-meta"><span>{category.label}</span><i>·</i><span>{displayDate(transaction.date)}</span>
         <i className="payment-meta">·</i><span className="payment-meta">{payment.fullLabel}</span>
       </span>
@@ -147,7 +148,7 @@ export function TransactionDetail({ transaction, onDelete, onSave }: {
   return <>
     <div className="detail-summary">
       <span className={`transaction-icon tone-${category.tone}`}>{category.emoji}</span>
-      <h3>{transaction.description}</h3>
+      <h3>{transaction.description || category.label}</h3>
       <p className={income ? "income-text" : "expense-text"}>{income ? "+" : "−"}{formatMoney(transaction.amountCents)}</p>
     </div>
     <dl className="detail-facts">

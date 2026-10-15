@@ -75,6 +75,22 @@ desplegar. No uses comodines amplios para las redirecciones de producción.
 
 ## Verificación y límites
 
+### Migración de notas opcionales
+
+Antes de publicar la versión que permite guardar movimientos sin detalle, aplica
+`supabase/migrations/20261015000000_optional_transaction_description.sql` al
+proyecto correspondiente. Amplía la restricción a 0–160 caracteres y conserva
+`NOT NULL`; no modifica movimientos existentes, permisos ni firmas de RPC.
+
+La migración está incluida en las pruebas locales; su presencia en el repositorio
+no confirma que esté aplicada en Supabase. El estado remoto verificado indicado
+al inicio de esta guía corresponde a la migración inicial.
+
+Publica después la aplicación y recarga las sesiones abiertas: el cliente anterior
+rechaza detalles vacíos al leer movimientos. Para volver a una versión anterior,
+mantén el cliente compatible con notas vacías mientras existan dichos registros;
+no restaures la restricción antigua ni rellenes notas de usuarios automáticamente.
+
 `npm test` ejecuta las migraciones en PostgreSQL en memoria, con usuarios
 independientes y roles `anon` y `authenticated`. Prueba aislamiento, relación entre
 billetera/categoría/tipo, invitaciones y retirada de miembros, conflictos de
