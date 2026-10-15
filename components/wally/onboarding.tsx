@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { formatMoney, parseAmount } from "@/lib/finance";
 import { AmountInput } from "./amount-input";
 import { Icon } from "./icon";
+import { BrandMark } from "./brand-mark";
 import { useWallet } from "./wally-provider";
 
 export function Onboarding({ onComplete, signOut, connectionError }: {
@@ -40,7 +41,7 @@ export function Onboarding({ onComplete, signOut, connectionError }: {
 
   return <div className="onboarding-page">
     <header className="onboarding-header">
-      <span className="brand"><span className="brand-mark"><Icon name="wallet" size={25} /></span><span className="brand-name">Wally</span></span>
+      <span className="brand" aria-label="Wally"><BrandMark /><span className="brand-name">wally</span></span>
       <button className="text-button onboarding-signout" disabled={busy || leaving} onClick={async () => {
         setLeaving(true); setError("");
         try { await signOut(); }

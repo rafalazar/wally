@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "./icon";
+import { useWorkspace } from "./wally-provider";
 
 export function HelpPanel() {
   return <>
@@ -16,6 +17,13 @@ export function HelpPanel() {
 }
 
 export function PrivacyPanel({ onExport }: { onExport: () => void }) {
+  const { storageMode } = useWorkspace();
+  if (storageMode === "local") return <>
+    <p className="modal-intro">Esta es una cuenta de prueba local.</p>
+    <div className="privacy-points"><h3>Solo en este navegador</h3><p>Los movimientos se guardan en este navegador y no se envían a Supabase. No están vinculados con Google ni se sincronizan entre dispositivos.</p>
+      <h3>Una prueba que puedes reiniciar</h3><p>Cerrar sesión conserva los datos. Reiniciar prueba borra únicamente esta billetera de prueba y vuelve a mostrar la bienvenida. Las billeteras compartidas se prueban con cuentas de Google.</p></div>
+    <button className="secondary-button full-width" onClick={onExport}><Icon name="download" size={17} />Descargar mis movimientos</button>
+  </>;
   return <>
     <span className="privacy-icon"><Icon name="shield" size={30} /></span>
     <p className="modal-intro">Tus movimientos se guardan en tu cuenta de Wally y están vinculados con tu billetera.</p>

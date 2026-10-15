@@ -1,0 +1,33 @@
+/* Plain native select is the fallback; no scripted listbox or extra focus stops. */
+.wally-select { position: relative; display: inline-flex; min-width: 0; vertical-align: middle; }
+.wally-select-control { appearance: none; width: 100%; min-width: 0; min-height: 44px; padding: 11px 42px 11px 14px; border: 1px solid var(--control-border); border-radius: 12px; background: var(--surface); color: var(--foreground); font-size: 13px; line-height: 1.5; font-weight: 600; cursor: pointer; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.wally-select-control:hover:not(:disabled) { border-color: var(--green); background: var(--green-light); }
+.wally-select-control:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; border-color: var(--green); }
+.wally-select-control:disabled { opacity: .55; cursor: not-allowed; }
+.wally-select-chevron { position: absolute; right: 14px; top: 50%; translate: 0 -50%; color: var(--green); pointer-events: none; transition: rotate .18s cubic-bezier(.16, 1, .3, 1); }
+.wally-select:has(select:open) .wally-select-chevron { rotate: 180deg; }
+.filter-selects .wally-select { flex: 1 1 auto; max-width: 230px; }
+.month-picker .wally-select { width: 100%; }
+.month-picker .wally-select-control { padding-left: 42px; text-transform: capitalize; }
+.workspace-bar .wally-select { max-width: 360px; }
+
+/* https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Customizable_select */
+@supports (appearance: base-select) {
+  .wally-select-control, .wally-select-control::picker(select) { appearance: base-select; }
+  .wally-select-control::picker-icon { display: none; }
+  .wally-select-control:open { border-color: var(--green); }
+  .wally-select-control::picker(select) { min-width: anchor-size(width); max-height: min(320px, 65dvh); margin-block: 6px; padding: 6px; border: 1px solid var(--control-border); border-radius: 14px; background: var(--surface); color: var(--foreground); font: inherit; overflow: auto; scrollbar-color: #9aafa2 transparent; scrollbar-width: thin; }
+  .wally-select-control option { min-height: 44px; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; white-space: normal; overflow-wrap: anywhere; font-weight: 500; cursor: pointer; }
+  .wally-select-control option:hover { background: var(--control-hover); }
+  .wally-select-control option:checked { background: var(--green-light); color: var(--green); font-weight: 700; }
+  .wally-select-control option:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+  .wally-select-control option::checkmark { order: 1; margin-left: auto; color: var(--green); }
+}
+@media (max-width: 640px) {
+  .wally-select-control { font-size: 16px; padding-inline: 12px 32px; }
+  .wally-select-chevron { right: 10px; width: 15px; }
+  .filter-selects .wally-select { max-width: none; }
+  .filter-selects .wally-select:first-child { grid-column: 1 / -1; }
+  .workspace-bar .wally-select { flex: 1; max-width: calc(100% - 90px); }
+}
+@media (prefers-reduced-motion: reduce) { .wally-select-chevron { transition: none; } }

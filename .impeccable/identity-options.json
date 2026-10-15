@@ -1,0 +1,232 @@
+{
+  "title": "Una identidad más fresca para Wally",
+  "question": "Compara la dirección principal, la recomendación y una alternativa con más contraste. Puedes abrir las imágenes para ver logo y controles.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "Wally Índice",
+      "kicker": "THE ROLL",
+      "lineage": "Etiquetas de biblioteca y organización personal",
+      "thesis": "Una W abierta y turquesa convierte el orden cotidiano en una marca viva.",
+      "palette": [
+        "#11B8AC",
+        "#007D85",
+        "#EF557D",
+        "#163A41",
+        "#F5FBFA"
+      ],
+      "materials": [
+        "Color plano",
+        "Filas claras",
+        "Blanco luminoso"
+      ],
+      "viewport": "Logo propio, navegación ligera y desplegables amplios con una selección inequívoca.",
+      "risk": "El turquesa es familiar en productos digitales; la W y los controles deben aportar carácter.",
+      "raised": [
+        {
+          "from": "Señal digital",
+          "raise": "Cada estado seleccionado debe reconocerse sin depender solo del color."
+        },
+        {
+          "from": "Cuaderno musical",
+          "raise": "Etiquetas a la izquierda e importes alineados para leer de un vistazo."
+        },
+        {
+          "from": "Folio botánico",
+          "raise": "El mismo logo debe conservar proporciones y legibilidad desde favicon hasta bienvenida."
+        },
+        {
+          "from": "Catálogo de personajes",
+          "raise": "La silueta de la W debe reconocerse incluso a tamaño pequeño."
+        },
+        {
+          "from": "Datos en blanco y negro",
+          "raise": "Contraste y foco legibles sin ornamentación que compita con el monto."
+        }
+      ],
+      "hero": ".impeccable/mocks/decision/assigned.svg",
+      "board": ".impeccable/mocks/decision/assigned.svg",
+      "comp": ".impeccable/mocks/decision/assigned.webp"
+    },
+    {
+      "id": "model-pick",
+      "label": "Wally Mercado",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "Fichas y etiquetas de compras cotidianas",
+      "thesis": "Dos gestos de color forman una W cálida, cercana y con más energía.",
+      "palette": [
+        "#F45D37",
+        "#CF4322",
+        "#008864",
+        "#263D30",
+        "#FBFCF8"
+      ],
+      "materials": [
+        "Tinta plana",
+        "Controles táctiles",
+        "Acentos vivos"
+      ],
+      "viewport": "Logo coral y verde, acciones claras y filtros de categorías con filas cómodas.",
+      "risk": "Es la opción más cercana a los colores actuales y también la más familiar.",
+      "hero": ".impeccable/mocks/decision/model-pick.svg",
+      "board": ".impeccable/mocks/decision/model-pick.svg",
+      "comp": ".impeccable/mocks/decision/model-pick.webp"
+    },
+    {
+      "id": "challenger-wayfinding",
+      "label": "Wally Señal",
+      "verdict": "competitive",
+      "lineage": "Señalética de aeropuerto",
+      "thesis": "Una marca amarilla y de gran contraste para encontrar cada acción al instante.",
+      "palette": [
+        "#FFD23A",
+        "#242C2A",
+        "#FFFFFF",
+        "#0B8061"
+      ],
+      "materials": [
+        "Bandas de color",
+        "Flechas precisas",
+        "Superficies planas"
+      ],
+      "viewport": "Una cabecera reconocible y controles que señalan claramente dónde estás y qué elegiste.",
+      "case": "Compite en claridad; se siente más enérgica y menos íntima que una billetera personal.",
+      "risk": "El amarillo puede dominar; requiere reservarlo para navegación y selección.",
+      "hero": "https://impeccable.style/worlds/cards/wayfinding-cartography-signage-terminal-yellow-wayfinding-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/wayfinding-cartography-signage-terminal-yellow-wayfinding.webp",
+      "comp": ".impeccable/mocks/decision/challenger-wayfinding.webp"
+    },
+    {
+      "id": "challenger-ikeda-datamatics",
+      "label": "Datos en blanco y negro",
+      "thesis": "Números y bandas de lectura como una trama visual.",
+      "palette": [
+        "#000000",
+        "#FFFFFF"
+      ],
+      "materials": [
+        "Trama",
+        "Alto contraste"
+      ],
+      "viewport": "Los movimientos se recorren como columnas de datos.",
+      "case": "Pierde cercanía y claridad cotidiana frente a Índice.",
+      "kept": "Contraste preciso, sin efectos intermitentes.",
+      "risk": "La densidad técnica compite con registrar un monto.",
+      "verdict": "declined",
+      "hero": "https://impeccable.style/worlds/cards/ikeda-datamatics-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/ikeda-datamatics.webp"
+    },
+    {
+      "id": "challenger-vernacular-ephemera-cassette-j-card",
+      "label": "Cuaderno musical",
+      "thesis": "Un registro como lista de pistas escrita y ordenada.",
+      "palette": [
+        "#1648A0",
+        "#FFFFFF",
+        "#CC3038"
+      ],
+      "materials": [
+        "Papel blanco",
+        "Tinta azul"
+      ],
+      "viewport": "Ingresos y gastos en dos caras, con importes a la derecha.",
+      "case": "La metáfora de dos caras oculta comparaciones y resulta menos reconocible.",
+      "kept": "Alineación firme entre concepto e importe.",
+      "risk": "El cambio de cara añade un paso al uso diario.",
+      "verdict": "declined",
+      "hero": "https://impeccable.style/worlds/cards/vernacular-ephemera-cassette-j-card-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/vernacular-ephemera-cassette-j-card.webp"
+    },
+    {
+      "id": "challenger-digital-design-canon-metro-typographic-tiles",
+      "label": "Señal digital",
+      "thesis": "Navegación por grandes bloques de color y tipografía.",
+      "palette": [
+        "#000000",
+        "#00AEEB",
+        "#FFFFFF"
+      ],
+      "materials": [
+        "Bloques planos",
+        "Tipografía amplia"
+      ],
+      "viewport": "Registro, movimientos y resumen como destinos visuales.",
+      "case": "La superficie oscura y la navegación panorámica alejan el tono cotidiano buscado.",
+      "kept": "Una selección visible y consistente en cada control.",
+      "risk": "El tamaño de los bloques reduce espacio para el formulario.",
+      "verdict": "declined",
+      "hero": "https://impeccable.style/worlds/cards/digital-design-canon-metro-typographic-tiles-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/digital-design-canon-metro-typographic-tiles.webp"
+    },
+    {
+      "id": "challenger-editorial-sequence-montage-botanical-folio-season",
+      "label": "Folio botánico",
+      "thesis": "La evolución del mes como páginas de una misma secuencia.",
+      "palette": [
+        "#EFEADB",
+        "#327750",
+        "#B42D36"
+      ],
+      "materials": [
+        "Lámina",
+        "Líneas finas"
+      ],
+      "viewport": "Resumen por períodos alineados sobre una base común.",
+      "case": "La lectura contemplativa encaja peor con el registro frecuente y con la frescura pedida.",
+      "kept": "Consistencia de escala en todas las aplicaciones del logo.",
+      "risk": "Puede devolver a Wally al tono apagado que queremos cambiar.",
+      "verdict": "declined",
+      "hero": "https://impeccable.style/worlds/cards/editorial-sequence-montage-botanical-folio-season-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/editorial-sequence-montage-botanical-folio-season.webp"
+    },
+    {
+      "id": "challenger-pop-culture-shelf-character-goods-catalog",
+      "label": "Catálogo de personajes",
+      "thesis": "Categorías como una colección de figuras con identidad propia.",
+      "palette": [
+        "#F8D4DF",
+        "#C8EDE3",
+        "#7A4CA4"
+      ],
+      "materials": [
+        "Pasteles",
+        "Siluetas redondeadas"
+      ],
+      "viewport": "Categorías en una cuadrícula de personajes y etiquetas.",
+      "case": "Más lúdica, pero menos clara como herramienta financiera individual.",
+      "kept": "Una silueta reconocible en tamaños pequeños.",
+      "risk": "Los personajes distraen del importe y requieren otra identidad completa.",
+      "verdict": "declined",
+      "hero": "https://impeccable.style/worlds/cards/pop-culture-shelf-character-goods-catalog-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/pop-culture-shelf-character-goods-catalog.webp"
+    }
+  ],
+  "buildPath": {
+    "value": "code",
+    "toggle": true
+  },
+  "reroll": {
+    "registers": [
+      "safer",
+      "bolder"
+    ]
+  },
+  "steer": true,
+  "canon": true,
+  "canonCard": {
+    "label": "Estilo financiero convencional",
+    "thesis": "Azul y blanco con un icono de billetera sencillo.",
+    "palette": [
+      "#2563EB",
+      "#FFFFFF",
+      "#17243D"
+    ],
+    "materials": [
+      "Interfaz familiar",
+      "Azul uniforme"
+    ],
+    "viewport": "Marca y controles de una app financiera tradicional.",
+    "risk": "Se parecerá más a otras aplicaciones financieras.",
+    "comp": ".impeccable/mocks/decision/canon.webp"
+  }
+}

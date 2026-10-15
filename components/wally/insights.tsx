@@ -6,6 +6,7 @@ import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer,
 import { formatMoney, localDate, monthLabel, type CategoryId, type Transaction } from "@/lib/finance";
 import { availableMonths, buildMonthlyInsights } from "@/lib/insights";
 import { Icon } from "./icon";
+import { Select } from "./select";
 import { useCategories, useUi } from "./wally-provider";
 
 export default function Insights({ transactions, onCategory, onCreate }: {
@@ -23,13 +24,13 @@ export default function Insights({ transactions, onCategory, onCreate }: {
 
   return <section className="insights-page page-section" aria-labelledby="insights-title">
     <div className="page-heading">
-      <div className="section-heading"><span className="section-kicker">DALE PERSPECTIVA A TUS CUENTAS</span>
+      <div className="section-heading">
         <h1 id="insights-title">Entiende tu mes.</h1><p>Una mirada sencilla a lo que entra y lo que sale.</p>
       </div>
       <label className="month-picker"><Icon name="calendar" size={18} /><span className="sr-only">Mes del resumen</span>
-        <select value={month} onChange={event => setMonth(event.target.value)}>
+        <Select value={month} onChange={event => setMonth(event.target.value)}>
           {months.map(value => <option key={value} value={value}>{monthLabel(value)}</option>)}
-        </select>
+        </Select>
       </label>
     </div>
 

@@ -1,16 +1,25 @@
-.auth-page { min-height: 100dvh; display: grid; place-items: center; padding: 30px 20px; background: radial-gradient(ellipse at 15% 15%, #ffede0 0, transparent 55%), var(--background); }
-.auth-card { width: min(100%, 460px); display: flex; flex-direction: column; gap: 22px; padding: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 28px; box-shadow: var(--shadow); }
-.auth-card .brand-mark { width: 62px; height: 62px; border-radius: 21px; margin-bottom: 12px; }
+.auth-page { min-height: 100dvh; display: grid; place-items: center; padding: 30px 20px; background: var(--background); }
+.auth-card { width: min(100%, 460px); display: flex; flex-direction: column; gap: 22px; padding: 40px; background: var(--surface); border: 1px solid #d2e1c7; border-radius: 16px; }
+.auth-brand { margin-bottom: 10px; gap: 14px; }
+.auth-brand .brand-mark { width: 64px; height: 64px; }
+.auth-brand .brand-name { font-size: 40px; }
 .auth-card h1 { font-size: clamp(28px, 5vw, 37px); letter-spacing: -1.3px; line-height: 1.15; font-weight: 800; }
 .auth-card p { color: var(--muted); line-height: 1.8; }
 .auth-card .section-kicker { margin: 0; }
 .auth-card .primary-button { min-height: 50px; }
 .auth-card .small-print { font-size: 11px; }
+.local-test-access { display: grid; gap: 10px; padding-top: 20px; border-top: 1px solid var(--border); }
+.local-test-access .secondary-button { min-height: 48px; white-space: normal; line-height: 1.5; }
+.auth-card .local-test-access p { font-size: 12px; color: #596354; line-height: 1.6; }
+.local-test-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; padding: 12px max(20px, calc((100vw - 1280px) / 2)); background: var(--green-light); color: #27634f; }
+.local-test-bar > div { display: grid; gap: 4px; margin-right: auto; font-size: 12px; line-height: 1.5; }
+.local-test-bar strong { font-size: 14px; }
+.local-test-bar .text-button { min-height: 44px; color: #27634f; }
+@media (max-width: 600px) { .local-test-bar > div { flex-basis: 100%; } }
 .connection-notice { padding: 12px 20px; background: #fff0d9; color: #795623; font-size: 12px; text-align: center; line-height: 1.6; }
 .workspace-bar { background: #fff; border-bottom: 1px solid var(--border); }
 .workspace-bar > div { max-width: 1360px; margin: auto; padding: 10px 36px; display: flex; align-items: center; gap: 12px; }
 .workspace-bar label { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
-.workspace-bar select { min-width: 0; max-width: 360px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--background); font-weight: 600; }
 .workspace-bar .text-button { margin-left: auto; }
 .account-copy > strong { display: block; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .inline-fields { display: flex; gap: 8px; align-items: center; }
@@ -79,7 +88,6 @@
 @media (max-width: 640px) {
   .auth-card { padding: 30px 24px; }
   .workspace-bar > div { padding: 10px 20px; flex-wrap: wrap; gap: 8px; }
-  .workspace-bar select { flex: 1; max-width: calc(100% - 100px); }
   .workspace-bar > div > .currency-badge { display: none; }
   .workspace-bar .text-button { width: 100%; justify-content: flex-start; margin: 0; }
 }

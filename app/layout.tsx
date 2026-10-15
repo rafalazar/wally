@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./workspace.css";
+import "./select.css";
 
 const jakarta = localFont({
   src: "./fonts/PlusJakartaSans.ttf",

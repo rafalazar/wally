@@ -9,7 +9,7 @@ import {
   INITIAL_BALANCE_CATEGORY, localDate, MAX_AMOUNT_CENTS, parseAmount, paymentMethods,
   createTransactionFormSchema, type Transaction, type TransactionFormValues, type TransactionType,
 } from "@/lib/finance";
-import { useCategories, useUi, useWallet } from "./wally-provider";
+import { useCategories, useUi, useWallet, useWorkspace } from "./wally-provider";
 import { Icon } from "./icon";
 import { AmountInput } from "./amount-input";
 
@@ -21,6 +21,7 @@ type Props = {
 };
 
 export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
+  const { storageMode } = useWorkspace();
   const categories = useCategories();
   const wallet = useWallet();
   const id = useId();
@@ -214,7 +215,7 @@ export function TransactionForm({ ready, initial, onSave, onCancel }: Props) {
         </div>
       </fieldset>
     </form>
-    {!initial && <p className="save-reassurance"><Icon name="shield" size={14} />Tus movimientos se guardan en tu billetera de Wally.</p>}
+    {!initial && <p className="save-reassurance"><Icon name="shield" size={14} />{storageMode === "local" ? "Tus movimientos de prueba se guardan solo en este navegador." : "Tus movimientos se guardan en tu billetera de Wally."}</p>}
   </section>;
 }
 

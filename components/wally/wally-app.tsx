@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
@@ -15,7 +15,8 @@ import { Metrics } from "./metrics";
 import { Modal } from "./modal";
 import { TransactionForm } from "./transaction-form";
 import { EmptyState, History, TransactionDetail, TransactionRow } from "./transaction-history";
-import { useCategories, useUi, useWallet } from "./wally-provider";
+import { useCategories, useUi, useWallet, useWorkspace } from "./wally-provider";
+import { localTestSessionSnapshot, localTestServerSnapshot, setLocalTestSession, subscribeLocalTestSession } from "@/lib/local-test-access";
 import { AuthBoundary } from "./auth-boundary";
 import { CloudWorkspace } from "./cloud-workspace";
 
@@ -25,8 +26,10 @@ const Insights = dynamic(() => import("./insights"), {
 });
 type OpenModal = { kind: "help" | "privacy" } | { kind: "detail"; id: string };
 const emptyTransactions: Transaction[] = [];
+const LocalWorkspace = process.env.NODE_ENV === "development" ? lazy(() => import("./local-workspace")) : null;
 
 function WalletScreen() {
+  const { storageMode } = useWorkspace();
   const wallet = useWallet();
   const categories = useCategories();
   const transactions = wallet.isError ? emptyTransactions : wallet.data?.transactions ?? emptyTransactions;
@@ -93,7 +96,7 @@ function WalletScreen() {
         <p><Icon name="calendar" size={14} /><span>Tu espacio financiero</span><span className="context-divider">/</span>
           {ready ? new Intl.DateTimeFormat("es", { month: "long", year: "numeric" }).format(new Date(`${localDate()}T12:00:00`)) : "Bienvenido"}
         </p>
-        <span className="sync-label"><span className="status-dot" />{ready ? "Guardado en tu cuenta" : "Preparando tu espacio"}</span>
+        <span className="sync-label"><span className="status-dot" />{ready ? storageMode === "local" ? "Guardado en este navegador" : "Guardado en tu cuenta" : "Preparando tu espacio"}</span>
       </div>
       {wallet.isError && <div className="storage-error" role="alert"><Icon name="info" />
         <span>{wallet.error.message}</span><button className="text-button" onClick={() => void wallet.refetch()} disabled={wallet.isFetching}>Reintentar</button>
@@ -149,7 +152,11 @@ function WalletScreen() {
 }
 
 export function WallyApp() {
-  return <AuthBoundary>{identity =>
+  const localSession = useSyncExternalStore(subscribeLocalTestSession, localTestSessionSnapshot, localTestServerSnapshot);
+  if (LocalWorkspace && localSession === 2) return <Suspense fallback={<main className="auth-page"><p role="status">Preparando tu prueba local...</p></main>}>
+    <LocalWorkspace signOut={async () => { setLocalTestSession(false); toast.dismiss(); }}><WalletScreen /></LocalWorkspace>
+  </Suspense>;
+  return <AuthBoundary onLocalSignIn={LocalWorkspace && localSession === 1 ? () => setLocalTestSession(true) : undefined}>{identity =>
     <CloudWorkspace key={identity.user.id} identity={identity}><WalletScreen /></CloudWorkspace>}
   </AuthBoundary>;
 }

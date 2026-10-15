@@ -60,8 +60,12 @@ scope. A unique competitive claim has not been established.
 - Cash, transfer, debit, and credit describe recorded payment methods. Recording a
   credit payment does not manage a bank account, debt, installments, or card cycle.
 - CSV export is available for transaction records, including filtered history.
-- Google authentication and Supabase cloud storage are required. There is no
-  anonymous wallet or local-data fallback; `/demo` redirects to sign-in.
+- Production requires Google authentication and Supabase cloud storage; `/demo`
+  redirects to sign-in. Local development on loopback hosts offers an explicit
+  Usuario de prueba button with its own browser-only wallet. It starts with
+  onboarding, persists test movements and supports restarting the test. It neither
+  authenticates with Supabase nor imports real-account data, and is unavailable in
+  production. Shared wallets and real authentication still require Google.
 - Shared-wallet invitation codes are single-use and expire after seven days.
   Wally does not send invitation emails automatically.
 - Access rules isolate accounts and wallets. Version checks detect conflicting
@@ -72,8 +76,11 @@ scope. A unique competitive claim has not been established.
 ## Brand Commitments
 
 The product name is Wally. Spanish is the confirmed user-facing language.
-Existing slogans and voice examples are implementation evidence; no additional
-brand or visual constraints were established during initialization.
+The owner approved Wally Mercado on 2026-10-15: a close, fresh identity using
+coral and green, a flat two-stroke W, and a lowercase wordmark. The identity
+is shared across sign-in, welcome, the app header, and favicon. This brand
+commitment does not change the personal-finance scope or account behavior.
+DESIGN.md records the implemented visual tokens and reusable controls.
 
 ## Evidence on Hand
 

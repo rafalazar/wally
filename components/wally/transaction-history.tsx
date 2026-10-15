@@ -7,6 +7,7 @@ import {
 } from "@/lib/finance";
 import { filterTransactions } from "@/lib/insights";
 import { Icon } from "./icon";
+import { Select } from "./select";
 import { TransactionForm } from "./transaction-form";
 import { InitialBalanceEdit } from "./initial-balance-edit";
 import { useCategories, useUi } from "./wally-provider";
@@ -74,7 +75,7 @@ export function History({ transactions, onSelect, onExport, onCreate }: {
 
   return <section className="history-page page-section" aria-labelledby="history-title">
     <div className="page-heading">
-      <div className="section-heading"><span className="section-kicker">CADA MOVIMIENTO CUENTA</span>
+      <div className="section-heading">
         <h1 id="history-title">Tu dinero, en detalle.</h1><p>Encuentra, revisa y edita tus movimientos.</p>
       </div>
       <button className="primary-button" onClick={onCreate}><Icon name="plus" size={18} />Nuevo movimiento</button>
@@ -92,19 +93,19 @@ export function History({ transactions, onSelect, onExport, onCreate }: {
             onClick={() => setFilters({ type: value, category: "all" })}>{value === "all" ? "Todos" : value === "expense" ? "Gastos" : "Ingresos"}</button>)}
         </div>
         <div className="filter-selects">
-          <select aria-label="Filtrar por categoría" value={filters.category}
+          <Select aria-label="Filtrar por categoría" value={filters.category}
             onChange={event => setFilters({ category: event.target.value as typeof filters.category })}>
             <option value="all">Todas las categorías</option>
             {categories.filter(c => filters.type === "all" || c.type === filters.type).map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-          </select>
-          <select aria-label="Filtrar por mes" value={filters.month} onChange={event => setFilters({ month: event.target.value })}>
+          </Select>
+          <Select aria-label="Filtrar por mes" value={filters.month} onChange={event => setFilters({ month: event.target.value })}>
             <option value="">Cualquier mes</option>
             {months.map(month => <option key={month} value={month}>{monthLabel(month, true)}</option>)}
-          </select>
-          <select aria-label="Ordenar movimientos" value={filters.sort}
+          </Select>
+          <Select aria-label="Ordenar movimientos" value={filters.sort}
             onChange={event => setFilters({ sort: event.target.value as typeof filters.sort })}>
             <option value="date">Más recientes</option><option value="amount">Mayor monto</option>
-          </select>
+          </Select>
         </div>
       </div>
     </div>

@@ -160,7 +160,10 @@ no se promete funcionamiento sin conexión ni sincronización instantánea. Goog
 está habilitado; la verificación del flujo completo con dos cuentas se realiza
 iniciando sesión en el navegador.
 
-El único acceso a las billeteras es mediante Google. La antigua ruta `/demo`
+El acceso a las billeteras de Supabase es mediante Google. En desarrollo local,
+el botón **Entrar como usuario de prueba** abre una billetera aislada en el navegador
+sin usar Supabase. Sirve para probar la interfaz; no verifica OAuth, RLS ni la
+migración remota, y no está disponible en producción. La antigua ruta `/demo`
 redirige a `/` y la aplicación no genera ni carga movimientos de ejemplo. Las
 billeteras locales anteriores no se leen ni se importan a Supabase. Las categorías
 iniciales y los métodos de pago son catálogos para registrar movimientos propios.

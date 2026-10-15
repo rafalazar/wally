@@ -6,6 +6,7 @@ import { cloudWalletSchema, createWalletRepository, databaseError, type CloudWal
 import type { Identity } from "./auth-boundary";
 import { WallyProvider } from "./wally-provider";
 import { Icon } from "./icon";
+import { Select } from "./select";
 import { Modal } from "./modal";
 import { Onboarding, OnboardingSuccess } from "./onboarding";
 
@@ -162,9 +163,9 @@ export function CloudWorkspace({ identity, children }: { identity: Identity; chi
   return <>
     <div className="workspace-bar"><div>
       <label htmlFor="wallet-selector"><Icon name="wallet" size={17} />Billetera</label>
-      <select id="wallet-selector" value={selected.id} onChange={e => { setSelectedId(e.target.value); setSharing(false); }}>
+      <Select id="wallet-selector" value={selected.id} onChange={e => { setSelectedId(e.target.value); setSharing(false); }}>
         {wallets.map(wallet => <option key={wallet.id} value={wallet.id}>{wallet.name} · {wallet.kind === "personal" ? "Privada" : "Compartida"}</option>)}
-      </select><span className="currency-badge">PEN</span>
+      </Select><span className="currency-badge">PEN</span>
       <button className="text-button" onClick={() => setSharing(true)}>Gestionar billeteras</button>
     </div></div>
     {error && <p className="connection-notice" role="alert">{error}</p>}

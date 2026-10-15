@@ -40,3 +40,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Impeccable: keep design documentation and reusable configuration in Git.
+# Session state and review screenshots stay local.
+/.impeccable/questions/
+/.impeccable/live/
+/.impeccable/review/**/*.png
+/.impeccable/review/**/*.jpg
+/.impeccable/review/**/*.jpeg
+/.impeccable/review/**/*.webp

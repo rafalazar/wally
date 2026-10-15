@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
 import { formatMoney } from "@/lib/finance";
 import { Icon, type IconName } from "./icon";
+import { BrandMark } from "./brand-mark";
 import { useUi, useWorkspace, type View } from "./wally-provider";
 
 type Props = {
@@ -18,7 +19,7 @@ const pages: { view: View; label: string; icon: IconName }[] = [
 ];
 
 export function Header({ balance, onHelp, onPrivacy, onExport }: Props) {
-  const { displayName, signOut } = useWorkspace();
+  const { displayName, signOut, storageMode } = useWorkspace();
   const [signingOut, setSigningOut] = useState(false);
   const view = useUi(state => state.view);
   const navigate = useUi(state => state.navigate);
@@ -51,8 +52,8 @@ export function Header({ balance, onHelp, onPrivacy, onExport }: Props) {
 
   return <header className="site-header"><div className="header-inner">
     <button className="brand" onClick={() => go("register")} aria-label="Wally, ir al registro">
-      <span className="brand-mark"><Icon name="wallet" size={23} /></span>
-      <span className="brand-copy"><span className="brand-name">Wally <span className="beta-badge">Beta</span></span>
+      <BrandMark />
+      <span className="brand-copy"><span className="brand-name">wally <span className="beta-badge">Beta</span></span>
         <span className="brand-tagline">Un poco de orden. Mucha tranquilidad.</span>
       </span>
     </button>
@@ -71,13 +72,13 @@ export function Header({ balance, onHelp, onPrivacy, onExport }: Props) {
         <button type="button" className="account-button" aria-label="Mi espacio, opciones de cuenta"
           aria-expanded={accountOpen} aria-controls="account-panel" onClick={() => setAccountOpen(!accountOpen)}>
           <span className="avatar">W</span>
-          <span className="account-copy"><strong>{displayName}</strong><span>Cuenta de Google</span></span>
+          <span className="account-copy"><strong>{displayName}</strong><span>{storageMode === "local" ? "Prueba local" : "Cuenta de Google"}</span></span>
           <Icon name="chevronDown" size={15} />
         </button>
         <AnimatePresence>{accountOpen && <motion.div className="header-popover account-popover" id="account-panel"
           initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
           <div className="popover-profile"><span className="avatar large">W</span><div><strong>Tu espacio personal</strong><p>Un día a la vez, con Wally.</p></div></div>
-          <div className="account-sync-info"><span className="status-dot" />Guardado en tu cuenta</div>
+          <div className="account-sync-info"><span className="status-dot" />{storageMode === "local" ? "Guardado en este navegador" : "Guardado en tu cuenta"}</div>
           <button className="popover-action" onClick={() => go("history")}><Icon name="wallet" size={17} />Mis movimientos<Icon name="chevron" size={14} /></button>
           <button className="popover-action" onClick={() => action(onExport)}><Icon name="download" size={17} />Exportar mis datos<Icon name="chevron" size={14} /></button>
           <button className="popover-action" onClick={() => action(onPrivacy)}><Icon name="shield" size={17} />Privacidad<Icon name="chevron" size={14} /></button>

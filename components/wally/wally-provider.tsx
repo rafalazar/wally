@@ -74,7 +74,7 @@ const subscribeHydration = () => () => {};
 const clientSnapshot = () => true;
 const serverSnapshot = () => false;
 
-type Workspace = { repository: WalletRepository; scope: string; displayName: string; signOut: () => Promise<void> };
+type Workspace = { repository: WalletRepository; scope: string; displayName: string; storageMode?: "cloud" | "local"; signOut: () => Promise<void> };
 const WorkspaceContext = createContext<Workspace | null>(null);
 export function useWorkspace() {
   const workspace = useContext(WorkspaceContext);
@@ -82,7 +82,7 @@ export function useWorkspace() {
   return workspace;
 }
 
-export function WallyProvider({ children, repository, scope, displayName, signOut }: Workspace & { children: ReactNode }) {
+export function WallyProvider({ children, repository, scope, displayName, storageMode = "cloud", signOut }: Workspace & { children: ReactNode }) {
   const cleanupTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [uiStore] = useState(() => createUiStore(scope));
   const [queryClient] = useState(() => new QueryClient({
@@ -98,7 +98,7 @@ export function WallyProvider({ children, repository, scope, displayName, signOu
     // Clear only after a real unmount, when no replacement setup cancels this timer.
     return () => { cleanupTimer.current = setTimeout(() => queryClient.clear(), 0); };
   }, [queryClient]);
-  return <WorkspaceContext.Provider value={{ repository, scope, displayName, signOut }}><UiContext.Provider value={uiStore}>
+  return <WorkspaceContext.Provider value={{ repository, scope, displayName, storageMode, signOut }}><UiContext.Provider value={uiStore}>
     <QueryClientProvider client={queryClient}>
       <MotionConfig reducedMotion="user" transition={{ duration: 0.22, ease: "easeOut" }}>
         {children}
