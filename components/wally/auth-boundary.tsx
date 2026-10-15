@@ -43,7 +43,8 @@ export function AuthBoundary({ children }: { children: (identity: Identity) => R
 
   async function signIn() {
     if (!client) return;
-    setBusy(true); setError("");
+    setBusy(true); 
+    setError("");
     try {
       const config = supabaseConfig()!;
       const response = await fetch(`${config.url}/auth/v1/settings`, {
