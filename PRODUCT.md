@@ -32,6 +32,9 @@ scope. A unique competitive claim has not been established.
 ## Operating Context
 
 - The interface is in Spanish, with PEN currency formatting for Peru.
+- `/` presents the public landing to signed-out visitors. Acceder and the landing
+  calls to action open the access screen; Continuar con Google starts sign-in.
+  A verified session goes directly to the wallet or its required welcome flow.
 - Users sign in with Google and access their wallets through their account.
 - The main workflow is Registro: choose income or expense, enter the amount,
   category, payment method, and date, optionally add a note, then save.
@@ -61,8 +64,10 @@ scope. A unique competitive claim has not been established.
   credit payment does not manage a bank account, debt, installments, or card cycle.
 - CSV export is available for transaction records, including filtered history.
 - Production requires Google authentication and Supabase cloud storage; `/demo`
-  redirects to sign-in. Local development on loopback hosts offers an explicit
-  Usuario de prueba button with its own browser-only wallet. It starts with
+  redirects to `/`. The landing's interactive example uses fictitious amounts
+  and does not save transactions. Local development on loopback hosts offers an
+  explicit Usuario de prueba button on the access screen, with its own
+  browser-only wallet. It starts with
   onboarding, persists test movements and supports restarting the test. It neither
   authenticates with Supabase nor imports real-account data, and is unavailable in
   production. Shared wallets and real authentication still require Google.
@@ -85,6 +90,8 @@ DESIGN.md records the implemented visual tokens and reusable controls.
 ## Evidence on Hand
 
 - `README.md`: current scope, routes, account behavior, and data model.
+- `app/page.tsx` and `components/wally/landing-page.tsx`: public entry, clearly
+  identified interactive example, and access actions.
 - `components/wally/auth-boundary.tsx`: sign-in and account access messaging.
 - `components/wally/cloud-workspace.tsx`: wallet selection, sharing, and membership.
 - `components/wally/transaction-form.tsx`, `transaction-history.tsx`, and

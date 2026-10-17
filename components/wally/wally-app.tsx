@@ -151,12 +151,12 @@ function WalletScreen() {
   </div>;
 }
 
-export function WallyApp() {
+export function WallyApp({ showLanding = false }: { showLanding?: boolean }) {
   const localSession = useSyncExternalStore(subscribeLocalTestSession, localTestSessionSnapshot, localTestServerSnapshot);
   if (LocalWorkspace && localSession === 2) return <Suspense fallback={<main className="auth-page"><p role="status">Preparando tu prueba local...</p></main>}>
     <LocalWorkspace signOut={async () => { setLocalTestSession(false); toast.dismiss(); }}><WalletScreen /></LocalWorkspace>
   </Suspense>;
-  return <AuthBoundary onLocalSignIn={LocalWorkspace && localSession === 1 ? () => setLocalTestSession(true) : undefined}>{identity =>
+  return <AuthBoundary showLanding={showLanding} onLocalSignIn={LocalWorkspace && localSession === 1 ? () => setLocalTestSession(true) : undefined}>{identity =>
     <CloudWorkspace key={identity.user.id} identity={identity}><WalletScreen /></CloudWorkspace>}
   </AuthBoundary>;
 }

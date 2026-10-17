@@ -17,15 +17,16 @@ Copia `.env.example` a `.env.local` y completa la URL y la clave publicable de
 Supabase. Las variables están excluidas de Git. El proyecto configurado en este
 entorno es `zuzecdskahfsoiodgvrx`.
 
-- `/`: acceso con Google y billeteras de la cuenta.
+- `/`: landing pública; **Acceder** abre el acceso con Google. Con sesión
+  verificada, muestra directamente las billeteras de la cuenta (o la bienvenida).
 - `/auth/callback`: intercambio del código OAuth y creación de la sesión.
 - `/demo`: redirige al inicio de sesión para los enlaces antiguos.
 - En producción, el acceso requiere una sesión de Google.
 
 ### Usuario de prueba local
 
-Ejecuta `npm run dev`, abre `http://localhost:3000` y pulsa **Entrar como usuario de
-prueba**. El botón también está disponible sin configurar Supabase. El usuario
+Ejecuta `npm run dev`, abre `http://localhost:3000`, pulsa **Acceder** y luego
+**Entrar como usuario de prueba**. El botón también está disponible sin configurar Supabase. El usuario
 `Usuario de prueba` empieza con la bienvenida y permite registrar, editar, eliminar,
 deshacer y exportar movimientos. No requiere contraseña ni crea una cuenta remota.
 

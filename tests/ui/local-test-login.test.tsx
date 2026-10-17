@@ -9,13 +9,17 @@ import { WallyApp } from "@/components/wally/wally-app";
 import { localTestSessionSnapshot, LOCAL_TEST_SESSION_KEY } from "@/lib/local-test-access";
 import { LOCAL_TEST_WALLET_KEY } from "@/lib/local-test-wallet";
 
-beforeEach(() => { vi.stubEnv("NODE_ENV", "development"); });
+beforeEach(() => {
+  vi.stubEnv("NODE_ENV", "development");
+  vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+});
 afterEach(() => { sessionStorage.clear(); vi.unstubAllEnvs(); });
 
 test('test user enters without Google, persists after reload, signs out and resets the welcome', { timeout: 15000 }, async () => {
   const network = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("Network must not be used"));
   const user = userEvent.setup();
-  const view = render(<WallyApp />);
+  const view = render(<WallyApp showLanding />);
+  await user.click(await screen.findByRole("button", { name: "Acceder" }));
   await user.click(await screen.findByRole("button", { name: "Entrar como usuario de prueba" }));
   const amount = await screen.findByLabelText("Tu saldo inicial");
   await user.type(amount, "1250,50");
@@ -26,10 +30,11 @@ test('test user enters without Google, persists after reload, signs out and rese
   await user.click(screen.getByRole("button", { name: "Registrar gasto" }));
   await waitFor(() => expect(JSON.parse(localStorage.getItem(LOCAL_TEST_WALLET_KEY)!).wallet.transactions).toHaveLength(2));
   view.unmount();
-  render(<WallyApp />);
+  render(<WallyApp showLanding />);
   await screen.findByText("Guardado en este navegador");
   expect(screen.queryByLabelText("Tu saldo inicial")).toBeNull();
   await user.click(screen.getByRole("button", { name: "Cerrar sesión" }));
+  await user.click(await screen.findByRole("button", { name: "Acceder" }));
   await user.click(await screen.findByRole("button", { name: "Entrar como usuario de prueba" }));
   await screen.findByText("Guardado en este navegador");
   await user.click(screen.getByRole("button", { name: "Reiniciar prueba" }));
@@ -45,7 +50,8 @@ test('production ignores a previously stored development session and hides test 
   vi.stubEnv("NODE_ENV", "production");
   sessionStorage.setItem(LOCAL_TEST_SESSION_KEY, "active");
   expect(localTestSessionSnapshot()).toBe(0);
-  render(<WallyApp />);
+  render(<WallyApp showLanding />);
+  await userEvent.setup().click(await screen.findByRole("button", { name: "Acceder" }));
   await screen.findByRole("button", { name: "Continuar con Google" });
   expect(screen.queryByRole("button", { name: "Entrar como usuario de prueba" })).toBeNull();
   expect(screen.queryByLabelText("Tu saldo inicial")).toBeNull();
@@ -53,7 +59,8 @@ test('production ignores a previously stored development session and hides test 
 
 test('a blocked local save keeps the amount and does not report success', async () => {
   const user = userEvent.setup();
-  render(<WallyApp />);
+  render(<WallyApp showLanding />);
+  await user.click(await screen.findByRole("button", { name: "Acceder" }));
   await user.click(await screen.findByRole("button", { name: "Entrar como usuario de prueba" }));
   await user.type(await screen.findByLabelText("Tu saldo inicial"), "50");
   const save = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => { throw new Error("quota"); });

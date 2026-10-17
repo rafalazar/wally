@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { z } from "zod";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { supabaseConfig } from "@/lib/supabase/config";
 import { Icon } from "./icon";
 import { BrandMark } from "./brand-mark";
+import { LandingPage } from "./landing-page";
 
 export type Identity = {
   client: SupabaseClient<Database>;
@@ -19,15 +20,25 @@ export type Identity = {
 export function AuthBoundary({
   children,
   onLocalSignIn,
+  showLanding = false,
 }: {
   children: (identity: Identity) => ReactNode;
   onLocalSignIn?: () => void;
+  showLanding?: boolean;
 }) {
   const [client] = useState(() => (supabaseConfig() ? createClient() : null));
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(!!client);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [showSignIn, setShowSignIn] = useState(false);
+  const focusAfterNavigation = useRef(false);
+  useEffect(() => {
+    if (!focusAfterNavigation.current) return;
+    focusAfterNavigation.current = false;
+    window.scrollTo({ top: 0, behavior: "instant" });
+    document.getElementById(showSignIn ? "login-title" : "landing-title")?.focus({ preventScroll: true });
+  }, [showSignIn, error]);
   useEffect(() => {
     if (!client) return;
     let active = true;
@@ -60,7 +71,11 @@ export function AuthBoundary({
       changed = true;
       setUser(session?.user ?? null);
       setLoading(false);
-      if (event === "SIGNED_OUT") toast.dismiss();
+      if (event === "SIGNED_OUT") {
+        toast.dismiss();
+        setShowSignIn(false);
+        setError("");
+      }
     });
     return () => {
       active = false;
@@ -110,6 +125,8 @@ export function AuthBoundary({
       );
     toast.dismiss();
     setUser(null);
+    setShowSignIn(false);
+    setError("");
   }
 
   const localAccess = onLocalSignIn && (
@@ -147,11 +164,22 @@ export function AuthBoundary({
       </main>
     );
   if (client && user) return children({ client, user, signOut });
+  if (showLanding && !showSignIn && !error) {
+    return <LandingPage onAccess={() => {
+      focusAfterNavigation.current = true;
+      setShowSignIn(true);
+    }} />;
+  }
   return (
     <main className="auth-page">
       <section className="auth-card" aria-labelledby="login-title">
+        {showLanding && <button className="auth-home-button" onClick={() => {
+          focusAfterNavigation.current = true;
+          setError("");
+          setShowSignIn(false);
+        }}><Icon name="arrow" size={16} />Volver al inicio</button>}
         <span className="brand auth-brand" aria-label="Wally"><BrandMark /><span className="brand-name">wally</span></span>
-        <h1 id="login-title">Tus cuentas, contigo.</h1>
+        <h1 id="login-title" tabIndex={-1}>Tus cuentas, contigo.</h1>
         <p>
           Registra tus ingresos y gastos en soles. Organiza tu billetera
           personal y comparte otra con quienes tú elijas.
